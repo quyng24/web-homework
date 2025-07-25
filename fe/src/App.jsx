@@ -1,5 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {Navigate} from 'react-router-dom';
 import ProtectedRouter from './routers/ProtectedRouter';
 import Login from './pages/Login';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -9,11 +10,18 @@ import { authProvider } from './context/auth';
 
 function App() {
   const [roleName, setRoleName] = useState('');
+  const safeGetRole = () => {
+  try {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user?.role || null;
+  } catch {
+    return null;
+  }
+};
   useEffect(() => {
     authProvider.init();
-    setRoleName(JSON.parse(localStorage.getItem('user')).role);
+    setRoleName(safeGetRole());
   }, []);
-  console.log(roleName)
   return (
     <Router>
       <Routes>
@@ -36,7 +44,18 @@ function App() {
           }
         />
 
-        <Route path="*" element={roleName === 'admin' ? <AdminDashboard/> : roleName === 'user' ? <UserDashboard/> : <Login/>} />
+        <Route
+          path="*"
+          element={
+            roleName === "admin" ? (
+              <AdminDashboard />
+            ) : roleName === "user" ? (
+              <UserDashboard />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
       </Routes>
     </Router>
   );
