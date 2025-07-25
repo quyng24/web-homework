@@ -9,7 +9,8 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = (e) => {
+    e.preventDefault();
     authProvider.signin(email, password, (user, error) => {
       if (user) {
         if (user.role === "admin") navigate("/admin");
@@ -22,13 +23,10 @@ export default function Login() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
+      <form className="bg-white p-8 rounded shadow-md w-full max-w-sm">
         <h2 className="text-2xl font-semibold text-center mb-6">Đăng nhập</h2>
-        {error && (
-          <p className="text-red-500 mb-4 text-sm text-center">{error}</p>
-        )}
         <input
-          placeholder="Tên đăng nhập"
+          placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full px-4 py-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -41,9 +39,10 @@ export default function Login() {
           onChange={(e) => setPassword(e.target.value)}
           className="w-full px-4 py-2 mb-6 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
+        {error && (<p className="text-red-500 mb-4 text-sm text-center">{error}</p>)}
         <br />
         <BaseButton label="Login" text="white" colorBtn="#6794fa" width="100%" onClick={handleLogin} />
-      </div>
+      </form>
     </div>
   );
 }

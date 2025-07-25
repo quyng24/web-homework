@@ -9,6 +9,7 @@ export const getUsers = async (req, res) => {
         res.status(500).json({ message: e.message });
     }
 };
+
 //PORT /
 export const createUser = async (req, res) => {
     try {
@@ -21,6 +22,7 @@ export const createUser = async (req, res) => {
         res.status(500).json({ message: e.message });
     }
 }
+
 //GET /:id
 export const getUserById = async (req, res) => {
     const { id } = req.params;
@@ -33,6 +35,7 @@ export const getUserById = async (req, res) => {
         res.status(500).json({ message: e.message });
     }
 }
+
 //DELETE /:id
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
@@ -44,6 +47,7 @@ export const deleteUser = async (req, res) => {
       res.status(500).json({ message: e.message });
     }
 }
+
 //PUT /:id
 export const updateUser = async (req, res) => {
     const {id} = req.params;
