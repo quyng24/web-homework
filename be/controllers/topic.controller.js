@@ -28,7 +28,8 @@ export const createTopic = async (req, res) => {
     try {
         const {topicName, descriptionTopic, imgTopic} = req.body;
         if(!topicName) return res.status(400).json({message: 'Create fail!'});
-        const topic = await Topic({topicName, descriptionTopic, imgTopic});
+        const topic = new Topic({ topicName, descriptionTopic, imgTopic });
+        await topic.save();
         res.status(201).json(topic);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -54,8 +55,8 @@ export const updateTopic = async (req, res) => {
     try {
         const updateData = req.body;
         const updateTopic = await Topic.findByIdAndUpdate(id, updateData, {new: true, runValidators: true});
-        if(!updateUser) return res.status(404).json({message:'User not found'});
-        res.json(updateUser);
+        if(!updateTopic) return res.status(404).json({message:'User not found'});
+        res.json(updateTopic);
     } catch (e) {
         res.status(500).json({ message: e.message });
     }

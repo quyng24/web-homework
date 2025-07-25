@@ -7,7 +7,7 @@ export default function BaseButton(props) {
       color: text || 'white', 
       width: width,
       }}
-      className='flex items-center gap-2'
+      className={icon ? 'flex items-center gap-2' : ''}
       onClick={onClick}
       disabled={disabled}
     >
