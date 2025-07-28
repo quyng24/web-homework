@@ -7,6 +7,8 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserDashboard from './pages/user/UserDashboard';
 import { useEffect, useState } from 'react';
 import { authProvider } from './context/auth';
+import {routes} from './routers/index'
+import UserTopic from './pages/user/UserTopic';
 
 function App() {
   const [roleName, setRoleName] = useState('');
@@ -25,37 +27,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<Login />} />
-
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRouter role="admin">
-              <AdminDashboard/>
-            </ProtectedRouter>
-          }
-        />
-        <Route
-          path="/user"
-          element={
-            <ProtectedRouter role="user">
-              <UserDashboard />
-            </ProtectedRouter>
-          }
-        />
-
-        <Route
-          path="*"
-          element={
-            roleName === "admin" ? (
-              <AdminDashboard />
-            ) : roleName === "user" ? (
-              <UserDashboard />
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
+        {routes(roleName).map(({ path, element }, idx) => (
+          <Route key={idx} path={path} element={element} />
+        ))}
       </Routes>
     </Router>
   );

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowRight } from "react-icons/fa";
 import { Col, Row, Card, Carousel } from "antd";
 const { Meta } = Card;
-import { FaArrowRight } from "react-icons/fa";
 import LayoutDefault from "../../layouts/LayoutDefault";
 import BaseButton from "../../components/common/BaseButton";
 import { getTopics } from "../../api/apiTopic";
@@ -9,6 +10,7 @@ import { getTopics } from "../../api/apiTopic";
 export default function UserDashboard() {
   const [nameUser, setNameUser] = useState();
   const [topics, setTopics] = useState([]);
+  const navigate = useNavigate();
   const contentStudy = [
     {
       title: "1. Khám Phá Chủ Đề Đa Dạng",
@@ -30,7 +32,7 @@ export default function UserDashboard() {
       title: "5. Thực Hành Lại Bất Cứ Lúc Nào",
       desc: "Kiến thức cần được ôn luyện thường xuyên. Bạn có thể làm lại bất kỳ bài kiểm tra nào mà bạn đã hoàn thành trước đó, dù là để cải thiện điểm số hay chỉ đơn giản là để củng cố kiến thức."
     }
-  ]
+  ];
   useEffect(() => {
     setNameUser(JSON.parse(localStorage.getItem('user')).name);
     const fetchDataTopics = async () => {
@@ -101,23 +103,29 @@ export default function UserDashboard() {
         {/* Carousel chủ đề */}
         <Row>
           <Col span={24}>
-            <Carousel arrows infinite autoplay className="mt-4">
-              {topics.map((topic) => (
-                <Card
-                  key={topic._id}
-                  hoverable
-                  className="mx-2 rounded-xl shadow-md"
-                  cover={<img alt={topic.topicName} src={topic.imgTopic} className="rounded-t-xl h-[500px] object-cover w-full"/>}
-                >
-                  <Meta
-                    title={<p className="text-blue-600 font-semibold">{topic.topicName}</p>}
-                    description={<p className="text-gray-500 text-sm line-clamp-3">{topic.descriptionTopic}</p>}
-                  />
-                </Card>
+            <Carousel arrows autoplay infinite slidesToShow={2} slidesToScroll={1}>
+              {topics.map((topic, index) => (
+                <div key={index} className="p-6">
+                  <div className="overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300">
+                    <img
+                      src={topic.imgTopic}
+                      alt={topic.topicName}
+                      className="w-full h-[70%] object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="flex justify-between items-start mt-5 gap-4">
+                    <div className="max-w-[70%] h-24 pr-2">
+                      <h3 className="text-xl font-bold text-gray-900">{topic.topicName}</h3>
+                      <p className="text-sm text-gray-700 leading-relaxed">{topic.descriptionTopic}</p>
+                    </div>
+                    <BaseButton label="View topic" onClick={() => navigate('/user/topic')} />
+                  </div>
+                </div>
               ))}
             </Carousel>
           </Col>
         </Row>
+
       </div>
     </LayoutDefault>
   );

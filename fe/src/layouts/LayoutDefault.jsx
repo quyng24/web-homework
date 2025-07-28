@@ -14,10 +14,12 @@ export default function LayoutDefault({children}) {
     return (
       <div className="w-full min-h-screen">
         {roleName === "admin" ? (
-          <Row className="fixed top-0 left-0 right-0 z-50">
+          <Row className="fixed top-0 left-0 right-0 z-50 text-white">
             <Col span={24}>
               <div className="w-full flex justify-between items-center h-[80px] px-10 bg-gradient-to-r from-blue-500 to-blue-400 shadow-md fixed top-0 left-0 right-0 z-50">
                 <p>logo</p>
+                <p onClick={() => navigate('/admin')} className="text-center text-lg font-semibold hover:underline cursor-pointer">Quản lý Người dùng</p>
+                <p onClick={() => navigate('/admin/topic')} className="text-center text-lg font-semibold hover:underline cursor-pointer">Quản lý Chủ đề</p>
                 <BaseButton
                   label="Đăng xuất"
                   colorBtn="transparent"
@@ -34,11 +36,11 @@ export default function LayoutDefault({children}) {
             </Col>
             <Col span={6}>
               <p onClick={() => navigate('/user')} className="text-center text-lg font-semibold hover:underline cursor-pointer">
-                Home
+                Trang chủ
               </p>
             </Col>
-            <p className="text-center text-lg font-semibold hover:underline cursor-pointer">
-              Topic
+            <p onClick={() => navigate('/user/topic')} className="text-center text-lg font-semibold hover:underline cursor-pointer">
+              Chủ đề
             </p>
             <Col span={6}>
               <div className="w-full flex justify-center items-end">
