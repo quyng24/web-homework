@@ -25,9 +25,9 @@ export const createUser = async (req, res) => {
 
 //GET /:id
 export const getUserById = async (req, res) => {
-    const { id } = req.params;
-    if (!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({ message: "Invalid ID" });
     try {
+        const { id } = req.params;
+        if (!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({ message: "Invalid ID" });
         const user = await User.findById(id);
         if(!user) return res.status(404).json({message: 'User not found'});
         res.json(user);
@@ -38,21 +38,21 @@ export const getUserById = async (req, res) => {
 
 //DELETE /:id
 export const deleteUser = async (req, res) => {
-    const { id } = req.params;
-    if (!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({ message: "Invalid ID" });
     try {
-      const result = await User.deleteOne({ _id: id });
-      res.status(result.deletedCount ? 200 : 404).json({message: result.deletedCount ? "User deleted" : "User not found",});
+        const { id } = req.params;
+        if (!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({ message: "Invalid ID" });
+        const result = await User.deleteOne({ _id: id });
+        res.status(result.deletedCount ? 200 : 404).json({message: result.deletedCount ? "User deleted" : "User not found",});
     } catch (e) {
-      res.status(500).json({ message: e.message });
+        res.status(500).json({ message: e.message });
     }
 }
 
 //PUT /:id
 export const updateUser = async (req, res) => {
-    const {id} = req.params;
-    if(!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({message: "Invalid ID"});
     try {
+        const {id} = req.params;
+        if(!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({message: "Invalid ID"});
         const updateData = req.body;
         const updateUser = await User.findByIdAndUpdate(id, updateData, {new: true, runValidators: true});
         if(!updateUser) return res.status(404).json({message:'User not found'});

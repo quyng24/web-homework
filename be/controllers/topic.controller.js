@@ -3,8 +3,19 @@ import Topic from "../models/topic.model.js";
 //GET /
 export const getTopics = async (req, res) => {
     try {
-        const topics = await Topic.find();
-        res.json(topics);
+        const topicsWithQuestionCount = await Topic.aggregate([
+            {
+                $lookup: {
+                    from: "questions",
+                    localField: "_id",
+                    foreignField: "topicId",
+                    as: "questions"
+                }
+            },
+            { $addFields: {questionCount: { $size: "$questions" }}},
+            {$project: {questions: 0}}
+        ]);
+        res.json(topicsWithQuestionCount);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -38,9 +49,9 @@ export const createTopic = async (req, res) => {
 
 //DELETE /:id
 export const deleteTopic = async (req, res) => {
-    const { id } = req.params;
-    if (!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({ message: "Invalid ID" });
     try {
+        const { id } = req.params;
+        if (!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({ message: "Invalid ID" });
       const result = await Topic.deleteOne({ _id: id });
       res.status(result.deletedCount ? 200 : 404).json({message: result.deletedCount ? "Topic deleted" : "Topic not found",});
     } catch (error) {
@@ -50,9 +61,9 @@ export const deleteTopic = async (req, res) => {
 
 //PUT /:id
 export const updateTopic = async (req, res) => {
-    const {id} = req.params;
-    if(!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({message: "Invalid ID"});
     try {
+        const {id} = req.params;
+        if(!/^[0-9a-fA-F]{24}$/.test(id)) return res.status(400).json({message: "Invalid ID"});
         const updateData = req.body;
         const updateTopic = await Topic.findByIdAndUpdate(id, updateData, {new: true, runValidators: true});
         if(!updateTopic) return res.status(404).json({message:'User not found'});
