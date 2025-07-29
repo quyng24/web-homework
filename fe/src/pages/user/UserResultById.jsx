@@ -72,8 +72,6 @@ const UserResultById = () => {
           )}
           {result && (
             <BaseButton
-              type="primary"
-              className="mt-4"
               onClick={() => navigate(`/user/quiz/${result.topicId._id || result.topicId}`)}
               label='Làm lại'
             />

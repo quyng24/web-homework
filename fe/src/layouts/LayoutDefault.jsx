@@ -32,7 +32,9 @@ export default function LayoutDefault({children}) {
         ) : (
           <Row className="w-full flex justify-between items-center h-[80px] px-10 bg-gradient-to-r from-indigo-500 to-cyan-500 shadow-md fixed top-0 left-0 right-0 z-50 text-white">
             <Col span={4}>
-              <p className="text-center">Logo</p>
+              <div className="flex justify-center items-center w-full h-full">
+                <img className="max-w-[80px] max-h-[80px] mix-blend-multiply" src="https://static.vecteezy.com/system/resources/previews/027/426/352/non_2x/sfe-logo-design-inspiration-for-a-unique-identity-modern-elegance-and-creative-design-watermark-your-success-with-the-striking-this-logo-vector.jpg" alt="Logo" />
+              </div>
             </Col>
             <Col span={5}>
               <p onClick={() => navigate('/user')} className="text-center text-lg font-semibold hover:underline cursor-pointer">
