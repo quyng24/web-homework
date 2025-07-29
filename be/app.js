@@ -13,7 +13,7 @@ app.use('/api/users', routerUser);
 app.use('/api/auth', routerAuth);
 app.use('/api/topics', routerTopic);
 app.use('/api/questions', routerQuestion);
-app.use('/api/result', routerResult);
+app.use('/api/results', routerResult);
 
 
 export default app;

@@ -15,7 +15,6 @@ const UserResult = () => {
       try {
         const res = await getLatestResultByUserAndTopic(user.id, topicId);
         setResult(res.data);
-        console.log(res.data)
       } catch (error) {
         console.error(error);
       }
@@ -33,7 +32,7 @@ const UserResult = () => {
           <List
             itemLayout="vertical"
             dataSource={result.answers}
-            renderItem={({ questionId, selectedAnswer, isCorrect }, index) => (
+            renderItem={({ questionId, selectedAnswer }, index) => (
               <List.Item key={questionId._id}>
                 <div className="flex flex-col">
                   <Text strong>{index + 1}. {questionId.questionText}</Text>
