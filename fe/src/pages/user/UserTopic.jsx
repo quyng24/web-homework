@@ -11,6 +11,7 @@ const UserTopic = () => {
     const fetchDataTopics = async () => {
       const res = await getTopics();
       setTopic(res.data);
+      console.log(res.data)
     }
     fetchDataTopics();
   }, []);

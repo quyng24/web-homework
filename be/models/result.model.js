@@ -11,8 +11,8 @@ const resultSchema = new mongoose.Schema({
         ref: "Topic",
         required: true
     },
-    totalQuestion: Number,
-    correctAnswer: Number,
+    totalQuestions: Number,
+    correctAnswers: Number,
     percentage: Number,
     answers: [
         {
@@ -21,7 +21,7 @@ const resultSchema = new mongoose.Schema({
         isCorrect: Boolean,
         },
     ],
-    createAt: {type: Date, default: Date.now}
+    createdAt: {type: Date, default: Date.now}
 });
 const Result = mongoose.model('Result', resultSchema);
 export default Result;
