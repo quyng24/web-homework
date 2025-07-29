@@ -15,7 +15,7 @@ export const submitResult = async (req, res) => {
 export const getUserResults = async (req, res) => {
   try {
     const { userId } = req.params;
-    const results = await Result.find({ userId }).populate("topicId", "name").sort({ createdAt: -1 });
+    const results = await Result.find({ userId }).populate("topicId", "topicName").sort({ createdAt: -1 });
     res.json(results);
   } catch (err) {
     console.error("Error fetching results:", err);
@@ -28,9 +28,20 @@ export const getLatestResultByUserAndTopic = async (req, res) => {
   try {
     const result = await Result.findOne({userId, topicId})
     .sort({createdAt: -1})
-    .populate("topicId", "name")
+    .populate("topicId", "topicName")
     .populate("answers.questionId", "questionText options answer");
     if(!result) return res.status(404).json({message: "Không tìm thấy kết quả"});
+    res.json(result);
+  } catch (error) {
+    console.error("Lỗi khi lấy kết quả:", error);
+    res.status(500).json({ message: "Lỗi server." });
+  }
+}
+
+export const getUserResultById = async (req, res) => {
+  try {
+    const result = await Result.findById(req.params.resultId).populate("topicId", "topicName").populate("answers.questionId");
+    if(!result) return res.status(404).json({ message: "Không tìm thấy kết quả" });
     res.json(result);
   } catch (error) {
     console.error("Lỗi khi lấy kết quả:", error);

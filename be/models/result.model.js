@@ -22,6 +22,6 @@ const resultSchema = new mongoose.Schema({
         },
     ],
     createdAt: {type: Date, default: Date.now}
-});
+}, {timestamps: true});
 const Result = mongoose.model('Result', resultSchema);
 export default Result;

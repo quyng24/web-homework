@@ -31,18 +31,25 @@ export default function LayoutDefault({children}) {
           </Row>
         ) : (
           <Row className="w-full flex justify-between items-center h-[80px] px-10 bg-gradient-to-r from-indigo-500 to-cyan-500 shadow-md fixed top-0 left-0 right-0 z-50 text-white">
-            <Col span={6}>
+            <Col span={4}>
               <p className="text-center">Logo</p>
             </Col>
-            <Col span={6}>
+            <Col span={5}>
               <p onClick={() => navigate('/user')} className="text-center text-lg font-semibold hover:underline cursor-pointer">
                 Trang chủ
               </p>
             </Col>
-            <p onClick={() => navigate('/user/topic')} className="text-center text-lg font-semibold hover:underline cursor-pointer">
-              Chủ đề
-            </p>
-            <Col span={6}>
+            <Col span={5}>
+              <p onClick={() => navigate('/user/topic')} className="text-center text-lg font-semibold hover:underline cursor-pointer">
+                Chủ đề
+              </p>
+            </Col>
+            <Col span={5}>
+              <p onClick={() => navigate('/user/history')} className="text-center text-lg font-semibold hover:underline cursor-pointer">
+                Lịch sử làm bài
+              </p>
+            </Col>
+            <Col span={5}>
               <div className="w-full flex justify-center items-end">
                 <BaseButton
                   label="Đăng xuất"

@@ -7,6 +7,8 @@ import Login from "../pages/Login";
 import AdminTopic from "../pages/admin/AdminTopic";
 import UserQuiz from "../pages/user/UserQuiz";
 import UserResult from "../pages/user/UserResult";
+import UserHistory from "../pages/user/UserHistory";
+import UserResultById from "../pages/user/UserResultById";
 
 export const routes = (roleName) => [
   { path: "/login", element: <Login /> },
@@ -55,6 +57,22 @@ export const routes = (roleName) => [
     element: (
       <ProtectedRouter role="user">
         <UserResult/>
+      </ProtectedRouter>
+    )
+  },
+  {
+    path: "/user/history",
+    element: (
+      <ProtectedRouter role="user">
+        <UserHistory/>
+      </ProtectedRouter>
+    )
+  },
+  {
+    path: "/user/result-detail/:resultId",
+    element: (
+      <ProtectedRouter role="user">
+        <UserResultById/>
       </ProtectedRouter>
     )
   },
