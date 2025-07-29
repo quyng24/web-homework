@@ -1,71 +1,76 @@
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Typography, List, Radio, Button, Tag } from "antd";
+import { useEffect, useState } from "react";
+import { getLatestResultByUserAndTopic } from "../../api/apiResult";
 const { Title, Text } = Typography;
+import LayoutDefault from '../../layouts/LayoutDefault';
 
 const UserResult = () => {
   const { topicId } = useParams();
-  const { state } = useLocation();
-  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
+  const [result, setResult] = useState(null);
 
-  if (!state || !state.answeredQuestions) {
-    return <Text type="danger">Không có dữ liệu kết quả.</Text>;
-  }
-
-  const { correct, total, percent, answeredQuestions } = state;
+  useEffect(() => {
+    const fetchResult = async () => {
+      try {
+        const res = await getLatestResultByUserAndTopic(user.id, topicId);
+        setResult(res.data);
+        console.log(res.data)
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchResult();
+  }, [topicId, user.id]);
 
   return (
-    <div style={{ padding: 24 }}>
-      <Title level={2} className="text-center">
-        🎉 Tổng số câu đúng: {correct}/{total}
-      </Title>
-      <Title level={4} className="text-center mb-8">
-        🎯 Phần trăm chính xác: {percent}%
-      </Title>
+    <LayoutDefault>
+      {!result ? <Text type="danger">Không tìm thấy kết quả.</Text> : 
+      (
+        <div className="p-6">
+          <Title level={2} className="text-center">✅ Tổng số câu đúng: {result.correctAnswers}/{result.totalQuestions}</Title>
+          <Title level={4} className="text-center">🎯 Phần trăm chính xác: {result.percentage}%</Title>
+          <List
+            itemLayout="vertical"
+            dataSource={result.answers}
+            renderItem={({ questionId, selectedAnswer, isCorrect }, index) => (
+              <List.Item key={questionId._id}>
+                <div className="flex flex-col">
+                  <Text strong>{index + 1}. {questionId.questionText}</Text>
+                  <Radio.Group value={selectedAnswer} disabled className="mt-2">
+                    {questionId.options.map((opt, idx) => {
+                      const isRightAnswer = opt === questionId.answer;
+                      const isUserWrong = opt === selectedAnswer && !isRightAnswer;
 
-      <List
-        itemLayout="vertical"
-        dataSource={answeredQuestions}
-        renderItem={(q, index) => (
-          <List.Item key={q._id}>
-            <div>
-              <Text strong>
-                {index + 1}. {q.questionText}
-              </Text>
-
-              <Radio.Group
-                value={q.userAnswer}
-                disabled
-                style={{ marginTop: 8 }}
-              >
-                {q.options.map((opt, idx) => {
-                  const isCorrectAnswer = opt === q.answer;
-                  const isUserChosen = opt === q.userAnswer;
-                  const isWrong = isUserChosen && !isCorrectAnswer;
-
-                  return (
-                    <Radio
-                      key={idx}
-                      value={opt}
-                      className={`block mt-1 text-${isCorrectAnswer ? 'green' : isWrong ? 'red' : '#888'}-400 ${isCorrectAnswer || isWrong ? 'font-semibold' : 'font-normal'}`}
-                    >
-                      {opt}
-                      {" "}
-                      {isCorrectAnswer && <Tag color="green">Đúng</Tag>}
-                      {isWrong && <Tag color="red">Sai</Tag>}
-                    </Radio>
-                  );
-                })}
-              </Radio.Group>
-            </div>
-          </List.Item>
-        )}
-      />
-
-      <div className="text-center mt-8">
-        <Button onClick={() => navigate("/user")} className="mr-4">Quay về chủ đề</Button>
-        <Button type="primary" onClick={() => navigate(`/user/quiz/${topicId}`)}>Làm lại</Button>
-      </div>
-    </div>
+                      return (
+                        <Radio
+                          key={idx}
+                          value={opt}
+                          style={{
+                            display: "block",
+                            marginTop: 4,
+                            color: isRightAnswer
+                              ? "green"
+                              : isUserWrong
+                              ? "red"
+                              : "#888",
+                            fontWeight: isRightAnswer || isUserWrong ? 600 : 400,
+                          }}
+                        >
+                          {opt}{" "}
+                          {isRightAnswer && <Tag color="green">Đúng</Tag>}
+                          {isUserWrong && <Tag color="red">Sai</Tag>}
+                        </Radio>
+                      );
+                    })}
+                  </Radio.Group>
+                </div>
+              </List.Item>
+            )}
+          />
+        </div>
+      )}
+    </LayoutDefault>
   );
 };
 

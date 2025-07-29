@@ -1,5 +1,5 @@
 import { getQuestionsByTopicId } from '../../api/apiQuestion'
-import { Typography, List, Radio, Button, Spin } from "antd";
+import { Typography, List, Radio } from "antd";
 import { useEffect, useState } from "react";
 import BaseButton from '../../components/common/BaseButton';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -23,22 +23,20 @@ const UserQuiz = () => {
             if (isCorrect) correct++;
             return { ...q, userAnswer, isCorrect };
         });
-        const total = question.length;
-        const percent = ((correct / total) * 100).toFixed(0);
         try {
             await submitResultApi({
                 userId: user?.id,
                 topicId,
-                totalQuestions: total,
+                totalQuestions: question.length,
                 correctAnswers: correct,
-                percentage: percent,
+                percentage: ((correct / question.length) * 100).toFixed(0),
                 answers: answerQuestion.map((q) => ({
                     questionId: q._id,
-                    selectedAnswer: q.userAnswer,
+                    selectedAnswer: q.userAnswer || null,
                     isCorrect: q.isCorrect,
                 })),
             });
-            navigate(`/user/result/${topicId}`, {state: { correct, total, percent, answerQuestion }});
+            navigate(`/user/result/${topicId}`);
         } catch (error) {
             console.error("Lỗi gửi kết quả:", error);
         }
