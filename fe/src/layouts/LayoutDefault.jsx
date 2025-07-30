@@ -1,6 +1,5 @@
-import { Col, Row } from "antd";
+import { Col, Row, Button } from "antd";
 import { useNavigate } from "react-router-dom";
-import BaseButton from "../components/common/BaseButton";
 import { authProvider } from "../context/auth";
 import { useEffect, useState } from "react";
 
@@ -16,21 +15,18 @@ export default function LayoutDefault({children}) {
         {roleName === "admin" ? (
           <Row className="fixed top-0 left-0 right-0 z-50 text-white">
             <Col span={24}>
-              <div className="w-full flex justify-between items-center h-[80px] px-10 bg-gradient-to-r from-blue-500 to-blue-400 shadow-md fixed top-0 left-0 right-0 z-50">
-                <p>logo</p>
+              <div className="w-full flex justify-between items-center h-[80px] px-10 bg-gradient-to-r from-cyan-500 to-blue-500 shadow-md fixed top-0 left-0 right-0 z-50">
+                <div className="flex justify-center items-center h-full">
+                  <img className="max-w-[80px] max-h-[80px] mix-blend-multiply" src="https://static.vecteezy.com/system/resources/previews/027/426/352/non_2x/sfe-logo-design-inspiration-for-a-unique-identity-modern-elegance-and-creative-design-watermark-your-success-with-the-striking-this-logo-vector.jpg" alt="Logo" />
+                </div>
                 <p onClick={() => navigate('/admin')} className="text-center text-lg font-semibold hover:underline cursor-pointer">Quản lý Người dùng</p>
                 <p onClick={() => navigate('/admin/topic')} className="text-center text-lg font-semibold hover:underline cursor-pointer">Quản lý Chủ đề</p>
-                <BaseButton
-                  label="Đăng xuất"
-                  colorBtn="transparent"
-                  text="white"
-                  onClick={() => authProvider.signout(() => navigate("/login"))}
-                />
+                <Button type="primary" onClick={() => authProvider.signout(() => navigate('/login'))} >Đăng xuất</Button>
               </div>
             </Col>
           </Row>
         ) : (
-          <Row className="w-full flex justify-between items-center h-[80px] px-10 bg-gradient-to-r from-indigo-500 to-cyan-500 shadow-md fixed top-0 left-0 right-0 z-50 text-white">
+          <Row className="w-full flex justify-between items-center h-[80px] px-10 bg-gradient-to-r from-cyan-500 to-blue-500 shadow-md fixed top-0 left-0 right-0 z-50 text-white">
             <Col span={4}>
               <div className="flex justify-center items-center w-full h-full">
                 <img className="max-w-[80px] max-h-[80px] mix-blend-multiply" src="https://static.vecteezy.com/system/resources/previews/027/426/352/non_2x/sfe-logo-design-inspiration-for-a-unique-identity-modern-elegance-and-creative-design-watermark-your-success-with-the-striking-this-logo-vector.jpg" alt="Logo" />
@@ -53,12 +49,7 @@ export default function LayoutDefault({children}) {
             </Col>
             <Col span={5}>
               <div className="w-full flex justify-center items-end">
-                <BaseButton
-                  label="Đăng xuất"
-                  colorBtn="transparent"
-                  text="white"
-                  onClick={() => authProvider.signout(() => navigate("/login"))}
-                />
+                <Button type="primary" onClick={() => authProvider.signout(() => navigate('/login'))} >Đăng xuất</Button>
               </div>
             </Col>
           </Row>

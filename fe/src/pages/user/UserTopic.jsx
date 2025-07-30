@@ -31,7 +31,7 @@ const UserTopic = () => {
       title: "Làm bài",
       key: "action",
       render: (_, record) => (
-        <Button onClick={() => navigate(`/user/quiz/${record._id}`)}>Làm bài</Button>
+        <Button type="primary" onClick={() => navigate(`/user/quiz/${record._id}`)}>Làm bài</Button>
       ),
     },
   ];

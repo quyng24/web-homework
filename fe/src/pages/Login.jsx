@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authProvider } from "../context/auth";
 import BaseButton from "../components/common/BaseButton";
+import { Button } from "antd";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -41,7 +42,7 @@ export default function Login() {
         />
         {error && (<p className="text-red-500 mb-4 text-sm text-center">{error}</p>)}
         <br />
-        <BaseButton label="Login" text="white" colorBtn="#6794fa" width="100%" onClick={handleLogin} />
+        <Button type="primary" htmlType="submit" className="w-full font-medium" onClick={handleLogin} >Login</Button>
       </form>
     </div>
   );

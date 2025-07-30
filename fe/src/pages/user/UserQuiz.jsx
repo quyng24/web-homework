@@ -1,7 +1,6 @@
 import { getQuestionsByTopicId } from '../../api/apiQuestion'
-import { Typography, List, Radio } from "antd";
+import { Typography, List, Radio, Button } from "antd";
 import { useEffect, useState } from "react";
-import BaseButton from '../../components/common/BaseButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { submitResultApi } from '../../api/apiResult';
 import LayoutDefault from '../../layouts/LayoutDefault';
@@ -81,7 +80,7 @@ const UserQuiz = () => {
                         </List.Item>
                     )}
                 />
-                <BaseButton label="Nộp bài" onClick={handleSubmit} />
+                <Button onClick={handleSubmit} >Nộp bài</Button>
             </div>
         </LayoutDefault>
     )
