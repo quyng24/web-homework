@@ -6,7 +6,7 @@ export const getQuestionsByTopic = async (req, res) => {
   try {
     const { topicId } = req.params;
     if (!mongoose.Types.ObjectId.isValid(topicId)) return res.status(400).json({ message: "topicId không hợp lệ" });
-    const questions = await Question.find({ topicId: new mongoose.Types.ObjectId(topicId) });
+    const questions = await Question.find({ topicId: new mongoose.Types.ObjectId(topicId) }).sort({ createdAt: -1 });
     res.json(questions);
   } catch (err) {
     res.status(500).json({ message: "Lỗi khi lấy câu hỏi", error: err.message });

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { authProvider } from "../context/auth";
-import BaseButton from "../components/common/BaseButton";
 import { Button } from "antd";
 
 export default function Login() {

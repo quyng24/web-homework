@@ -27,7 +27,7 @@ export default function AdminDashboard () {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button >Xóa</Button>
+        <Button disabled onClick={() => handleDeleteUser(record._id)} >Xóa</Button>
       ),
     },
   ];
