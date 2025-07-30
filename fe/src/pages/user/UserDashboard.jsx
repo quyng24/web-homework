@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowRight } from "react-icons/fa";
-import { Col, Row, Card, Carousel } from "antd";
+import { Col, Row, Card, Carousel, Button } from "antd";
 const { Meta } = Card;
 import LayoutDefault from "../../layouts/LayoutDefault";
-import BaseButton from "../../components/common/BaseButton";
 import { getTopics } from "../../api/apiTopic";
 
 export default function UserDashboard() {
@@ -55,11 +54,7 @@ export default function UserDashboard() {
               SFE sẽ là người bạn đồng hành đáng tin cậy trên hành trình học tập không ngừng của bạn.
             </p>
             <div className="mt-4">
-              <BaseButton
-                label="Khám phá chủ đề"
-                icon={<FaArrowRight />}
-                className="bg-blue-600 text-white hover:bg-blue-700 transition-all px-6 py-2 rounded-lg shadow"
-              />
+              <Button type="primary" onClick={() => navigate('/user/topic')} >Khám phá chủ đề</Button>
             </div>
           </Col>
           <Col xs={0} md={12}>
@@ -118,7 +113,7 @@ export default function UserDashboard() {
                       <h3 className="text-xl font-bold text-gray-900">{topic.topicName}</h3>
                       <p className="text-sm text-gray-700 leading-relaxed">{topic.descriptionTopic}</p>
                     </div>
-                    <BaseButton label="View topic" onClick={() => navigate('/user/topic')} />
+                    <Button onClick={() => navigate('/user/topic')} >Làm bài</Button>
                   </div>
                 </div>
               ))}

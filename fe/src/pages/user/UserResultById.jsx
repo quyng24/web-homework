@@ -2,8 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import LayoutDefault from "../../layouts/LayoutDefault";
 import { getUserResultById } from "../../api/apiResult"; 
-import { Typography, List, Radio, Tag } from "antd";
-import BaseButton from "../../components/common/BaseButton";
+import { Typography, List, Radio, Tag, Button } from "antd";
 const { Title, Text } = Typography;
 
 const UserResultById = () => {
@@ -71,11 +70,7 @@ const UserResultById = () => {
             </div>
           )}
           {result && (
-            <BaseButton
-              onClick={() => navigate(`/user/quiz/${result.topicId._id || result.topicId}`)}
-              label='Làm lại'
-            />
-            
+            <Button type="primary" onClick={() => navigate(`/user/quiz/${result.topicId._id || result.topicId}`)} >Làm lại</Button>
           )}
         </LayoutDefault>
   )

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Table, Tag } from 'antd';
+import { Table, Tag, Button } from 'antd';
 import { deleteUser, getUsers } from '../../api/apiUser';
-import BaseButton from '../../components/common/BaseButton';
 import LayoutDefault from '../../layouts/LayoutDefault';
 
 
@@ -28,12 +27,7 @@ export default function AdminDashboard () {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <BaseButton
-          label="Delete"
-          colorBtn="#eb5151"
-          text="white"
-          onClick={() => handleDeleteUser(record._id)}
-        />
+        <Button >Xóa</Button>
       ),
     },
   ];
