@@ -1,14 +1,20 @@
 import { Navigate } from "react-router-dom";
+import { lazy } from "react";
+
 import ProtectedRouter from "./ProtectedRouter";
-import AdminDashboard from "../pages/admin/AdminDashboard";
-import UserDashboard from "../pages/user/UserDashboard";
-import UserTopic from "../pages/user/UserTopic";
-import Login from "../pages/Login";
-import AdminTopic from "../pages/admin/AdminTopic";
-import UserQuiz from "../pages/user/UserQuiz";
-import UserResult from "../pages/user/UserResult";
-import UserHistory from "../pages/user/UserHistory";
-import UserResultById from "../pages/user/UserResultById";
+
+const Login = lazy(() => import("../pages/Login"));
+
+const AdminDashboard = lazy(() => import("../pages/admin/AdminDashboard"));
+const AdminTopic = lazy(() => import("../pages/admin/AdminTopic"));
+const AdminQuestions = lazy(() => import("../pages/admin/AdminQuestions"));
+
+const UserDashboard = lazy(() => import("../pages/user/UserDashboard"));
+const UserTopic = lazy(() => import("../pages/user/UserTopic"));
+const UserQuiz = lazy(() => import("../pages/user/UserQuiz"));
+const UserResult = lazy(() => import("../pages/user/UserResult"));
+const UserHistory = lazy(() => import("../pages/user/UserHistory"));
+const UserResultById = lazy(() => import("../pages/user/UserResultById"));
 
 export const routes = (roleName) => [
   { path: "/login", element: <Login /> },
@@ -25,6 +31,14 @@ export const routes = (roleName) => [
     element: (
       <ProtectedRouter role="admin">
         <AdminTopic/>
+      </ProtectedRouter>
+    )
+  },
+  {
+    path: "/admin/topic/:topicId/questions",
+    element: (
+      <ProtectedRouter role="admin">
+        <AdminQuestions/>
       </ProtectedRouter>
     )
   },

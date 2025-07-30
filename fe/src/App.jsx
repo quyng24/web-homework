@@ -1,4 +1,5 @@
 import './App.css';
+import { Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { authProvider } from './context/auth';
@@ -20,11 +21,13 @@ function App() {
   }, []);
   return (
     <Router>
-      <Routes>
-        {routes(roleName).map(({ path, element }, idx) => (
-          <Route key={idx} path={path} element={element} />
-        ))}
-      </Routes>
+      <Suspense fallback={<div>Đang tải trang...</div>}>
+        <Routes>
+          {routes(roleName).map(({ path, element }, idx) => (
+            <Route key={idx} path={path} element={element} />
+          ))}
+        </Routes>
+      </Suspense>
     </Router>
   );
 }
