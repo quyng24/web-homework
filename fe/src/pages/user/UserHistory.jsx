@@ -9,23 +9,24 @@ export default function UserHistory() {
     const [history, setHistory] = useState([]);
     const navigate = useNavigate();
 
+    const filteredHistory = history.filter(item => item.topicId !== null);
     useEffect(() => {
         const fetchHistory = async () => {
             try {
                 const user = JSON.parse(localStorage.getItem('user'));
                 const res = await getResultByUser(user.id);
-                setHistory(res.data);
                 console.log(res.data)
+                setHistory(res.data);
             } catch (error) {
                 console.error(error)
             }
-            }
-            fetchHistory();
+        }
+        fetchHistory();
     }, []);
   return (
     <LayoutDefault>
         <div>
-            <Table dataSource={history} rowKey="_id">
+            <Table dataSource={filteredHistory} rowKey="_id">
                 <Column title="Chủ đề" dataIndex={['topicId', 'topicName']} />
                 <Column title="Số câu" dataIndex="totalQuestions" />
                 <Column title="Đúng" dataIndex="correctAnswers" />

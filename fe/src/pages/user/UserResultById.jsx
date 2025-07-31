@@ -48,16 +48,12 @@ const UserResultById = () => {
                               style={{
                                 display: "block",
                                 marginTop: 4,
-                                color: isRightAnswer
-                                  ? "green"
-                                  : isUserWrong
-                                  ? "red"
-                                  : "#888",
-                                fontWeight: isRightAnswer || isUserWrong ? 600 : 400,
+                                color: selectedAnswer === null ? "#888" : isRightAnswer ? "green" : isUserWrong ? "red" : "#888",
+                                fontWeight: selectedAnswer !== null && (isRightAnswer || isUserWrong) ? 600 : 400,
                               }}
                             >
                               {opt}{" "}
-                              {isRightAnswer && <Tag color="green">Đúng</Tag>}
+                              {(isRightAnswer && selectedAnswer !== null) && <Tag color="green">Đúng</Tag>}
                               {isUserWrong && <Tag color="red">Sai</Tag>}
                             </Radio>
                           );

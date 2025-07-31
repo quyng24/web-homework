@@ -26,15 +26,15 @@ export const login = async (req, res) => {
         if(!user) res.status(400).json({message: 'Email không đúng'});
         const isMatch = await bcrypt.compare(password, user.password);
         if(!isMatch) return res.status(400).json({message: 'Sai mật khẩu'});
-            res.json({
-                message: 'Đăng nhập thành công',
-                user: {
-                    id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role
-                }
-            });
+        res.json({
+            message: 'Đăng nhập thành công',
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role
+            }
+        });
     } catch (error) {
         res.status(500).json({message: error.message});
     }

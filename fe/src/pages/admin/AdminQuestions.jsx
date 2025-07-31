@@ -25,7 +25,7 @@ export default function AdminQuestion() {
       form.resetFields();
       setOpen(false);
     } catch (err) {
-      messageApi.open({type: 'error', content: err.message});
+      messageApi.open({type: 'error', content: 'Bạn chưa làm đủ các bước', err});
     }
   };
   const handleDeleteQuestion = async (id) => {
@@ -74,7 +74,7 @@ export default function AdminQuestion() {
       dataIndex: 'options',
       render: (_, record) => (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {record.options.map((answer, index) => (
+          {(Array.isArray(record.options) ? record.options : []).map((answer, index) => (
             <div key={index} className="p-2 border rounded">
               {answer}
             </div>
@@ -134,7 +134,7 @@ export default function AdminQuestion() {
                 {(fields, { add, remove }) => (
                   <>
                     {fields.map((field, index) => (
-                      <div fieldKey={field.fieldKey} className="flex gap-2 items-center mb-2">
+                      <div key={field.fieldKey} className="flex gap-2 items-center mb-2">
                         <Form.Item name={[field.name]} rules={[{ required: true, message: "Không được để trống" }]} className="flex-1">
                           <Input placeholder={`Đáp án ${index + 1}`} />
                         </Form.Item>
