@@ -5,6 +5,7 @@ import BaseModal from "../../components/common/BaseModal";
 import { createTopic, deleteTopic, getTopics, updateTopic } from "../../api/apiTopic";
 import { Button, Form, Input, Dropdown, message, Table } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
+import { hasEmptyStringOrNoData } from "../../utils/object";
 
 export default function AdminTopic() {
   const [topics, setTopics] = useState([]);
@@ -31,11 +32,15 @@ export default function AdminTopic() {
   const handleAddTopic = async () => {
     try {
       const values = await form.validateFields();
-      const res = await createTopic(values);
-      setTopics(prev => [...prev, res.data]);
-      messageApi.open({type: 'success', content: 'Tạo chủ đề mới thành công'});
-      form.resetFields();
-      setOpen(false);
+      if(!hasEmptyStringOrNoData(values)){
+        const res = await createTopic(values);
+        setTopics(prev => [...prev, res.data]);
+        messageApi.open({type: 'success', content: 'Tạo chủ đề mới thành công!'});
+        form.resetFields();
+        setOpen(false);
+      } else {
+        messageApi.open({type: 'error', content: 'Hãy thêm đầy đủ thông tin!'});
+      }
     } catch (err) {
       messageApi.open({type: 'error', content: err.message});
     }
@@ -128,6 +133,9 @@ export default function AdminTopic() {
           title={editMode ? "Chỉnh sửa Chủ Đề" : "Thêm Chủ Đề"}>
             <Form form={form} layout="vertical">
               <Form.Item name="topicName" label="Tên chủ đề">
+                <Input />
+              </Form.Item>
+              <Form.Item name="imgTopic" label="Hình ảnh">
                 <Input />
               </Form.Item>
               <Form.Item name="descriptionTopic" label="Mô tả">

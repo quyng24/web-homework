@@ -15,5 +15,4 @@ app.use('/api/topics', routerTopic);
 app.use('/api/questions', routerQuestion);
 app.use('/api/results', routerResult);
 
-
 export default app;

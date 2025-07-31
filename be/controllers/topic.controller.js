@@ -14,7 +14,7 @@ export const getTopics = async (req, res) => {
             },
             { $addFields: {questionCount: { $size: "$questions" }}},
             {$project: {questions: 0}}
-        ]);
+        ]).sort({ createdAt: -1 });
         res.json(topicsWithQuestionCount);
     } catch (error) {
         res.status(500).json({ message: error.message });
