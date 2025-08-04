@@ -1,4 +1,4 @@
-import { callApiLogin, callApiToken } from "../api/apiAuthen";
+import { callApiLogin, callApiLogout, callApiToken } from "../api/apiAuthen";
 
 export const authProvider = {
   isAuthenticated: false,
@@ -31,10 +31,12 @@ export const authProvider = {
     }
   },
 
-  signout(callback) {
-    this.isAuthenticated = false;
-    this.user = null;
-    localStorage.removeItem("user");
-    setTimeout(callback, 100);
+  async signout(callback) {
+    try {
+      await callApiLogout();
+    } catch (err) {
+      console.error("Lỗi khi đăng xuất:", err.message);
+    }
+    if (callback) setTimeout(callback, 200);
   },
 };

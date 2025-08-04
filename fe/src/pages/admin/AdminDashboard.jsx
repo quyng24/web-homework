@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Table, Tag, Button } from 'antd';
 import { deleteUser, getUsers } from '../../api/apiUser';
 import LayoutDefault from '../../layouts/LayoutDefault';
+import { authProvider } from '../../context/auth';
 
 
 export default function AdminDashboard () {
@@ -49,7 +50,7 @@ export default function AdminDashboard () {
         console.error(err);
       }            
     }
-    setNameUser(JSON.parse(localStorage.getItem('user')).name);
+    setNameUser(authProvider.user.name);
     fetchData();
   }, [])
   return (

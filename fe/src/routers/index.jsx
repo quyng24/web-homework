@@ -100,5 +100,5 @@ export const routes = (roleName) => [
       ) : (
         <Navigate to="/login" />
       )
-  },
+  }
 ];

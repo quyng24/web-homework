@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { RoleContext } from "../context/roleName";
 
-const useLocalStogate = () => useContext(RoleContext);
+const useAuthInit = () => useContext(RoleContext);
 
-export default useLocalStogate;
+export default useAuthInit;
