@@ -9,12 +9,9 @@ export default function LayoutDefault({children}) {
   useEffect(() => {
     const checkRole = async () => {
       await authProvider.init();
-      console.log(authProvider.user.role);
       setRoleName(authProvider?.user?.role);
     };
     checkRole();
-    console.log("🏁 Component loaded");
-  console.log("👤 authProvider:", authProvider);
   }, []);
     return (
       <div className="w-full min-h-screen">

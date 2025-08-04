@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 
 export const authMiddleware = (req, res, next) => {
-    console.log("🛡️ Middleware chạy. Token:", req.cookies.token);
     const token = req.cookies.token || req.headers.authorization?.split(" ")[1];
     if(!token) return res.status(401).json({message: 'Không có token'});
     try {

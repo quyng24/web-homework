@@ -42,8 +42,7 @@ export default function UserDashboard() {
       setTopics(res.data);
     }
     fetchDataTopics();
-    console.log("🏁 Component loaded");
-  console.log("👤 authProvider:", authProvider);
+    
   }, []);
   return (
     <LayoutDefault>
