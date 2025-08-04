@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaArrowRight } from "react-icons/fa";
-import { Col, Row, Card, Carousel, Button } from "antd";
-const { Meta } = Card;
+import { Col, Row, Carousel, Button } from "antd";
 import LayoutDefault from "../../layouts/LayoutDefault";
 import { getTopics } from "../../api/apiTopic";
+import { authProvider } from "../../context/auth";
 
 export default function UserDashboard() {
-  const [nameUser, setNameUser] = useState();
   const [topics, setTopics] = useState([]);
+  const [nameUser, setNameUser] = useState(null);
   const navigate = useNavigate();
   const contentStudy = [
     {
@@ -32,13 +31,19 @@ export default function UserDashboard() {
       desc: "Kiến thức cần được ôn luyện thường xuyên. Bạn có thể làm lại bất kỳ bài kiểm tra nào mà bạn đã hoàn thành trước đó, dù là để cải thiện điểm số hay chỉ đơn giản là để củng cố kiến thức."
     }
   ];
+  const safeGetNameUser = async () => {
+    await authProvider.init();
+    setNameUser(authProvider.user.name)
+  }
   useEffect(() => {
-    setNameUser(JSON.parse(localStorage.getItem('user')).name);
+    safeGetNameUser();
     const fetchDataTopics = async () => {
       const res = await getTopics();
       setTopics(res.data);
     }
     fetchDataTopics();
+    console.log("🏁 Component loaded");
+  console.log("👤 authProvider:", authProvider);
   }, []);
   return (
     <LayoutDefault>

@@ -1,25 +1,29 @@
-import { callApiLogin } from "../api/apiAuthen";
+import { callApiLogin, callApiToken } from "../api/apiAuthen";
 
 export const authProvider = {
   isAuthenticated: false,
   user: null,
 
-  init() {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      this.user = JSON.parse(storedUser);
+  async init() {
+    try {
+      const res = await callApiToken();
+      this.user = res.data;
       this.isAuthenticated = true;
+    } catch (err) {
+      console.error("Không xác thực được user:", err.message);
     }
   },
 
   async signin(email, password, callback) {
     try {
-      const res = await callApiLogin({ email, password });
-      const data = res.data;
-      this.isAuthenticated = true;
-      this.user = data.user;
-      localStorage.setItem("user", JSON.stringify(data.user));
-      callback(data.user);
+      await callApiLogin({ email, password });
+      setTimeout(async () => {
+        const res = await callApiToken();
+        console.log(res.data)
+        this.isAuthenticated = true;
+        this.user = res.data.role;
+        callback(res.data)
+      }, 300)
     } catch (error) {
       const errMessage = error.response?.data?.message || "Lỗi kết nối đến server";
       console.error("Đăng nhập lỗi:", errMessage);
