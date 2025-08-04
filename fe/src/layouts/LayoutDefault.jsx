@@ -4,12 +4,18 @@ import { authProvider } from "../context/auth";
 import { useEffect, useState } from "react";
 
 export default function LayoutDefault({children}) {
-    const [roleName, setRoleName] = useState('');
-    const navigate = useNavigate();
-    useEffect(() => {
-        const role = JSON.parse(localStorage.getItem('user')).role;
-        setRoleName(role)
-    }, [])
+  const [roleName, setRoleName] = useState(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    const checkRole = async () => {
+      await authProvider.init();
+      console.log(authProvider.user.role);
+      setRoleName(authProvider?.user?.role);
+    };
+    checkRole();
+    console.log("🏁 Component loaded");
+  console.log("👤 authProvider:", authProvider);
+  }, []);
     return (
       <div className="w-full min-h-screen">
         {roleName === "admin" ? (
