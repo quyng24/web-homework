@@ -11,27 +11,21 @@ const UserQuiz = () => {
     const navigate = useNavigate();
     const [question, setQuestion] = useState([]);
     const [answer, setAnswer] = useState({});
+    const [startTime] = useState(Date.now());
 
     const handleSelect = (questionId, value) => setAnswer(pre => ({...pre, [questionId]: value}));
     const handleSubmit = async () => {
-        let correct = 0;
-        const answerQuestion = question.map((q) => {
-            const userAnswer = answer[q._id];
-            const isCorrect = userAnswer === q.answer;
-            if (isCorrect) correct++;
-            return { ...q, userAnswer, isCorrect };
-        });
+        const answerQuestion = question.map((q) => ({
+            questionId: q._id,
+            selectedAnswer: answer[q._id] || null,
+        }));
+
         try {
             await submitResultApi({
                 topicId,
-                totalQuestions: question.length,
-                correctAnswers: correct,
-                percentage: ((correct / question.length) * 100).toFixed(0),
-                answers: answerQuestion.map((q) => ({
-                    questionId: q._id,
-                    selectedAnswer: q.userAnswer || null,
-                    isCorrect: q.isCorrect,
-                })),
+                answers: answerQuestion,
+                startTime,
+                endTime: Date.now()
             });
             navigate(`/user/result/${topicId}`);
         } catch (error) {

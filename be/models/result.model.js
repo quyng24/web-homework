@@ -21,7 +21,9 @@ const resultSchema = new mongoose.Schema({
         isCorrect: Boolean,
         },
     ],
-    createdAt: {type: Date, default: Date.now}
+    startTime: Date,
+    endTime: Date,
+    duration: {type: String},
 }, {timestamps: true});
 const Result = mongoose.model('Result', resultSchema);
 export default Result;
