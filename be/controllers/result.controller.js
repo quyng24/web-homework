@@ -1,11 +1,44 @@
 import Result from "../models/result.model.js";
+import Question from "../models/question.mode.js";
 
 export const submitResult = async (req, res) => {
   try {
     const userId = req.user.id;
-    const { topicId, totalQuestions, correctAnswers, percentage, answers } = req.body;
-    if (!topicId || !totalQuestions || !answers || !Array.isArray(answers)) return res.status(400).json({ message: "Dữ liệu không hợp lệ." });
-    const newResult = new Result({userId, topicId, totalQuestions, correctAnswers, percentage, answers});
+    const { topicId, answers, startTime, endTime } = req.body;
+    if (!topicId || !answers || !Array.isArray(answers)) return res.status(400).json({ message: "Dữ liệu không hợp lệ." });
+    const questions = await Question.find({ topicId });
+    let correct = 0;
+    const evaluatedAnswers = answers.map(a => {
+      const original = questions.find(q => q._id.toString() === a.questionId);
+      const isCorrect = original && original.answer === a.selectedAnswer;
+      if (isCorrect) correct++;
+      return {
+        questionId: a.questionId,
+        selectedAnswer: a.selectedAnswer,
+        isCorrect
+      };
+    });
+    const totalQuestions = questions.length;
+    const percentage = ((correct / totalQuestions) * 100).toFixed(0);
+
+    // Tính thời gian làm bài
+    const durationInMs = new Date(endTime) - new Date(startTime);
+    const minutes = Math.floor(durationInMs / 60000);
+    const seconds = Math.floor((durationInMs % 60000) / 1000);
+    const formattedDuration = `${minutes}:${seconds}`;
+
+    const newResult = new Result({
+      userId,
+      topicId,
+      totalQuestions,
+      correctAnswers: correct,
+      percentage,
+      answers: evaluatedAnswers,
+      startTime,
+      endTime,
+      duration: formattedDuration
+    });
+
     const savedResult = await newResult.save();
     res.status(201).json(savedResult);
   } catch (err) {

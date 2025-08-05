@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import moment from 'moment';
 import LayoutDefault from '../../layouts/LayoutDefault';
 import { useEffect, useState } from 'react';
 import { getResultByUser } from '../../api/apiResult';
@@ -16,7 +15,6 @@ export default function UserHistory() {
             try {
                 const user = authProvider.user;
                 const res = await getResultByUser(user._id);
-                console.log(res.data)
                 setHistory(res.data);
             } catch (error) {
                 console.error(error)
@@ -32,7 +30,7 @@ export default function UserHistory() {
                 <Column title="Số câu" dataIndex="totalQuestions" />
                 <Column title="Đúng" dataIndex="correctAnswers" />
                 <Column title="% Chính xác" dataIndex="percentage" />
-                <Column title="Ngày làm" render={(text, record) => moment(record.createdAt).format('DD/MM/YYYY HH:mm')} />
+                <Column title="Thời gian làm" dataIndex="duration" render={(duration) => duration}/>
                 <Column
                     title="Xem chi tiết"
                     render={(text, record) => (
