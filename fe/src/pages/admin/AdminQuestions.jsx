@@ -16,11 +16,20 @@ export default function AdminQuestion() {
   const [messageApi, contextHolder] = message.useMessage();
   const [form] = Form.useForm();
 
+  const fetchQuestions = async () => {
+    try {
+      const res = await getQuestionsByTopicId(topicId);
+      const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      setDataQuestions(sorted);
+    } catch (err) {
+      messageApi.open({type: 'error', content: err.message});
+    }
+  };
   const handleAddQuestion = async () => {
     try {
       const values = await form.validateFields();
-      const res = await createQuestion({...values, topicId});
-      setDataQuestions(prev => [{ ...res.data, createdAt: new Date() }, ...prev]);
+      await createQuestion({...values, topicId});
+      await fetchQuestions();
       messageApi.open({type: 'success', content: 'Thêm câu hỏi thành công!'});
       form.resetFields();
       setOpen(false);
@@ -43,7 +52,10 @@ export default function AdminQuestion() {
     try {
       const values = await form.validateFields();
       const res = await updateQuestion(currentQuestion._id, {...values, topicId});
-      setDataQuestions(prev => prev.map(q => (q._id === currentQuestion._id ? res.data : q)));
+      setDataQuestions(prev => {
+        const newList = [{ ...res.data, createdAt: new Date() }, ...prev];
+        return newList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      });
       messageApi.open({type: 'success', content: 'Cập nhật câu hỏi thành công!'})
       form.resetFields();
       setOpen(false);
@@ -53,15 +65,6 @@ export default function AdminQuestion() {
     }
   };
   useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const res = await getQuestionsByTopicId(topicId);
-        const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        setDataQuestions(sorted);
-      } catch (err) {
-        messageApi.open({type: 'error', content: err.message});
-      }
-    };
     fetchQuestions();
   }, [topicId]);
   const columns = [
@@ -168,7 +171,7 @@ export default function AdminQuestion() {
           </BaseModal>
         </div>
         <div className="w-full flex justify-center items-center">
-            <Table columns={columns} dataSource={dataQuestions.reverse()} pagination={{ pageSize: 5 }} rowKey={'_id'} />
+            <Table columns={columns} dataSource={dataQuestions} pagination={{ pageSize: 5 }} rowKey={(record, index) => record._id || index} />
         </div>
         <BaseModal 
         open={openDelete} 

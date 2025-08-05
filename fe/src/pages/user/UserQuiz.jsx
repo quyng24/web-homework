@@ -15,7 +15,6 @@ const UserQuiz = () => {
     const handleSelect = (questionId, value) => setAnswer(pre => ({...pre, [questionId]: value}));
     const handleSubmit = async () => {
         let correct = 0;
-        const user = JSON.parse(localStorage.getItem("user"));
         const answerQuestion = question.map((q) => {
             const userAnswer = answer[q._id];
             const isCorrect = userAnswer === q.answer;
@@ -24,7 +23,6 @@ const UserQuiz = () => {
         });
         try {
             await submitResultApi({
-                userId: user?.id,
                 topicId,
                 totalQuestions: question.length,
                 correctAnswers: correct,

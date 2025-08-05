@@ -1,8 +1,9 @@
 import express from 'express';
 const routerResult = express.Router();
 import {submitResult, getLatestResultByUserAndTopic, getUserResults, getUserResultById} from '../controllers/result.controller.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
 
-routerResult.post('/submit', submitResult);
+routerResult.post('/submit', authMiddleware, submitResult);
 routerResult.get('/latest/:userId/:topicId', getLatestResultByUserAndTopic);
 routerResult.get('/user/:userId', getUserResults);
 routerResult.get('/result/:resultId', getUserResultById);

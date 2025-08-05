@@ -4,6 +4,7 @@ import LayoutDefault from '../../layouts/LayoutDefault';
 import { useEffect, useState } from 'react';
 import { getResultByUser } from '../../api/apiResult';
 import { Table, Button } from 'antd';
+import { authProvider } from '../../context/auth';
 const { Column } = Table;
 export default function UserHistory() {
     const [history, setHistory] = useState([]);
@@ -13,8 +14,8 @@ export default function UserHistory() {
     useEffect(() => {
         const fetchHistory = async () => {
             try {
-                const user = JSON.parse(localStorage.getItem('user'));
-                const res = await getResultByUser(user.id);
+                const user = authProvider.user;
+                const res = await getResultByUser(user._id);
                 console.log(res.data)
                 setHistory(res.data);
             } catch (error) {
