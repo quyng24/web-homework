@@ -4,24 +4,24 @@ import { useEffect, useState } from "react";
 import { getLatestResultByUserAndTopic } from "../../api/apiResult";
 const { Title, Text } = Typography;
 import LayoutDefault from '../../layouts/LayoutDefault';
+import { authProvider } from "../../context/auth";
 
 const UserResult = () => {
   const { topicId } = useParams();
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = authProvider.user;
   const [result, setResult] = useState(null);
 
   useEffect(() => {
     const fetchResult = async () => {
       try {
-        const res = await getLatestResultByUserAndTopic(user.id, topicId);
-        console.log(res.data)
+        const res = await getLatestResultByUserAndTopic(user._id, topicId);
         setResult(res.data);
       } catch (error) {
         console.error(error);
       }
     }
     fetchResult();
-  }, [topicId, user.id]);
+  }, [topicId, user._id]);
 
   return (
     <LayoutDefault>

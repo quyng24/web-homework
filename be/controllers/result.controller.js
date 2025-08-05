@@ -2,7 +2,9 @@ import Result from "../models/result.model.js";
 
 export const submitResult = async (req, res) => {
   try {
-    const { userId, topicId, totalQuestions, correctAnswers, percentage, answers } = req.body;
+    const userId = req.user.id;
+    const { topicId, totalQuestions, correctAnswers, percentage, answers } = req.body;
+    if (!topicId || !totalQuestions || !answers || !Array.isArray(answers)) return res.status(400).json({ message: "Dữ liệu không hợp lệ." });
     const newResult = new Result({userId, topicId, totalQuestions, correctAnswers, percentage, answers});
     const savedResult = await newResult.save();
     res.status(201).json(savedResult);
