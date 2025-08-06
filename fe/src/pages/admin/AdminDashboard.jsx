@@ -54,11 +54,9 @@ export default function AdminDashboard () {
     fetchData();
   }, [])
   return (
-    <LayoutDefault>
-      <div className="flex flex-col min-h-screen">
-        <h2 className='text-2xl font-bold'>Xin chào, {nameUser}!</h2>
-        <Table rowKey="_id" columns={columnsUser} dataSource={dataUser} className="shadow-2xl"/>
-      </div>
-    </LayoutDefault>
+    <div className="flex flex-col min-h-screen">
+      <h2 className='text-2xl font-bold'>Xin chào, {nameUser}!</h2>
+      <Table rowKey="_id" columns={columnsUser} dataSource={dataUser} className="shadow-2xl"/>
+    </div>
   );
 }

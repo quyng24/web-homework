@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import LayoutDefault from "../../layouts/LayoutDefault";
 import BaseModal from "../../components/common/BaseModal";
 import { createTopic, deleteTopic, getTopics, updateTopic } from "../../api/apiTopic";
-import { Button, Form, Input, Dropdown, message, Table } from "antd";
+import { Button, Form, Input, Dropdown, message, Table, Select } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { hasEmptyStringOrNoData } from "../../utils/object";
 
@@ -116,7 +116,7 @@ export default function AdminTopic() {
     }
   ];
   return (
-    <LayoutDefault>
+    <>
       {contextHolder}
       <h1 className="text-2xl font-medium text-center mb-10">Quản lý Chủ đề</h1>
       <div className="w-full flex justify-end mb-4">
@@ -141,6 +141,11 @@ export default function AdminTopic() {
               <Form.Item name="descriptionTopic" label="Mô tả">
                 <Input.TextArea rows={3} />
               </Form.Item>
+              <Form.Item name="duration" label="Thời gian làm bài (phút)" rules={[{ required: true, message: "Vui lòng chọn thời gian làm bài" }]}>
+                <Select placeholder="Chọn thời gian">
+                  {[5, 10, 15, 20, 30, 60].map((min) => (<Select.Option key={min} value={min}>{min} phút</Select.Option>))}
+                </Select>
+              </Form.Item>
             </Form>
           </BaseModal>
       </div>
@@ -159,7 +164,7 @@ export default function AdminTopic() {
             <h2>{`Bạn có chắc chắn muốn xoá Chủ đề ${deleteData ? deleteData.topicName : 'này'}!`}</h2>
             <p>Nếu xác nhận xoá chủ đề này bạn sẽ không thể khôi phục lại trạng thái ban đầu</p>
           </div>
-        </BaseModal>
-  </LayoutDefault> 
+      </BaseModal>
+    </> 
   )
 }

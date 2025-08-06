@@ -37,9 +37,9 @@ export const getTopicById = async (req, res) => {
 // POST /
 export const createTopic = async (req, res) => {
     try {
-        const {topicName, descriptionTopic, imgTopic} = req.body;
+        const {topicName, descriptionTopic, imgTopic, allowedDuration} = req.body;
         if(!topicName) return res.status(400).json({message: 'Tạo chủ đề không thành công!'});
-        const topic = new Topic({ topicName, descriptionTopic, imgTopic });
+        const topic = new Topic({ topicName, descriptionTopic, imgTopic, allowedDuration });
         await topic.save();
         res.status(201).json(topic);
     } catch (error) {
