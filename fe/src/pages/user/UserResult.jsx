@@ -24,7 +24,7 @@ const UserResult = () => {
   }, [topicId, user._id]);
 
   return (
-    <LayoutDefault>
+    <>
       {!result ? <Text type="danger">Không tìm thấy kết quả.</Text> : 
       (
         <div className="p-6">
@@ -66,7 +66,7 @@ const UserResult = () => {
           />
         </div>
       )}
-    </LayoutDefault>
+    </>
   );
 };
 

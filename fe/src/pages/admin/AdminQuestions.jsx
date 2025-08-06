@@ -110,7 +110,7 @@ export default function AdminQuestion() {
     }
   ];
   return (
-    <LayoutDefault>
+    <>
       {contextHolder}
         <div className="w-full flex justify-end mb-4">
           <Button type="primary" onClick={() => setOpen(true)}>Thêm câu hỏi</Button>
@@ -188,6 +188,6 @@ export default function AdminQuestion() {
             <p>Nếu xác nhận xoá chủ đề này bạn sẽ không thể khôi phục lại trạng thái ban đầu</p>
           </div>
         </BaseModal>
-    </LayoutDefault>
+    </>
   )
 }

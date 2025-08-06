@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { authProvider } from "../context/auth";
 import { useEffect, useState } from "react";
+import LayoutDefault from "../layouts/LayoutDefault";
 
 export default function ProtectedRoute({ children, role }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -33,5 +34,9 @@ export default function ProtectedRoute({ children, role }) {
   if (!isAllowed) {
     return <Navigate to="/login" replace />;
   }
-  return children;
+  return (
+    <LayoutDefault>
+      {children}
+    </LayoutDefault>
+  );
 }

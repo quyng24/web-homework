@@ -28,6 +28,11 @@ const UserTopic = () => {
       key: "questionCount",
     },
     {
+      title: 'Thời gian làm bài',
+      dataIndex: 'duration',
+      key: 'duration'
+    },
+    {
       title: "Làm bài",
       key: "action",
       render: (_, record) => (
@@ -37,17 +42,15 @@ const UserTopic = () => {
   ];
 
   return (
-    <LayoutDefault>
-      <div>
-        <h2>Danh sách chủ đề</h2>
-        <Table
-          columns={columns}
-          dataSource={topic}
-          rowKey="_id"
-          pagination={{ pageSize: 5 }}
-        />
-      </div>
-    </LayoutDefault>
+    <div>
+      <h2>Danh sách chủ đề</h2>
+      <Table
+        columns={columns}
+        dataSource={topic}
+        rowKey="_id"
+        pagination={{ pageSize: 5 }}
+      />
+    </div>
   );
 };
 

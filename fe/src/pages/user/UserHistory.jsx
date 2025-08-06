@@ -10,35 +10,31 @@ export default function UserHistory() {
     const navigate = useNavigate();
 
     const filteredHistory = history.filter(item => item.topicId !== null);
-    useEffect(() => {
-        const fetchHistory = async () => {
-            try {
-                const user = authProvider.user;
-                const res = await getResultByUser(user._id);
-                setHistory(res.data);
-            } catch (error) {
-                console.error(error)
-            }
+    const fetchHistory = async () => {
+        try {
+            const user = authProvider.user;
+            const res = await getResultByUser(user._id);
+            setHistory(res.data);
+        } catch (error) {
+            console.error(error)
         }
-        fetchHistory();
-    }, []);
+    }
+    useEffect(() => {fetchHistory();}, []);
   return (
-    <LayoutDefault>
-        <div>
-            <Table dataSource={filteredHistory} rowKey="_id">
-                <Column title="Chủ đề" dataIndex={['topicId', 'topicName']} />
-                <Column title="Số câu" dataIndex="totalQuestions" />
-                <Column title="Đúng" dataIndex="correctAnswers" />
-                <Column title="% Chính xác" dataIndex="percentage" />
-                <Column title="Thời gian làm" dataIndex="duration" render={(duration) => duration}/>
-                <Column
-                    title="Xem chi tiết"
-                    render={(text, record) => (
-                        <Button onClick={() => navigate(`/user/result-detail/${record._id}`)} >Chi tiết</Button>
-                    )}
-                />
-            </Table>
-        </div>
-    </LayoutDefault>
+    <div>
+        <Table dataSource={filteredHistory} rowKey="_id">
+            <Column title="Chủ đề" dataIndex={['topicId', 'topicName']} />
+            <Column title="Số câu" dataIndex="totalQuestions" />
+            <Column title="Đúng" dataIndex="correctAnswers" />
+            <Column title="% Chính xác" dataIndex="percentage" />
+            <Column title="Thời gian làm" dataIndex="actualDuration" render={(ac) => ac}/>
+            <Column
+                title="Xem chi tiết"
+                render={(text, record) => (
+                    <Button onClick={() => navigate(`/user/result-detail/${record._id}`)} >Chi tiết</Button>
+                )}
+            />
+        </Table>
+    </div>
   )
 }

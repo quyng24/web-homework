@@ -23,7 +23,8 @@ const resultSchema = new mongoose.Schema({
     ],
     startTime: Date,
     endTime: Date,
-    duration: {type: String},
+    actualDuration: String,
+    allowedDuration: Number,
 }, {timestamps: true});
 const Result = mongoose.model('Result', resultSchema);
 export default Result;

@@ -1,11 +1,15 @@
 import Result from "../models/result.model.js";
 import Question from "../models/question.mode.js";
+import Topic from "../models/topic.model.js";
 
 export const submitResult = async (req, res) => {
   try {
     const userId = req.user.id;
     const { topicId, answers, startTime, endTime } = req.body;
     if (!topicId || !answers || !Array.isArray(answers)) return res.status(400).json({ message: "Dữ liệu không hợp lệ." });
+    const topic = await Topic.findById(topicId);
+    if (!topic) return res.status(404).json({ message: "Không tìm thấy chủ đề." });
+    const allowedDuration = topic.duration;
     const questions = await Question.find({ topicId });
     let correct = 0;
     const evaluatedAnswers = answers.map(a => {
@@ -36,7 +40,8 @@ export const submitResult = async (req, res) => {
       answers: evaluatedAnswers,
       startTime,
       endTime,
-      duration: formattedDuration
+      actualDuration: formattedDuration,
+      allowedDuration
     });
 
     const savedResult = await newResult.save();
