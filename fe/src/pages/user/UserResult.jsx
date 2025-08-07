@@ -15,6 +15,7 @@ const UserResult = () => {
     const fetchResult = async () => {
       try {
         const res = await getLatestResultByUserAndTopic(user._id, topicId);
+        console.log(res.data)
         setResult(res.data);
       } catch (error) {
         console.error(error);

@@ -13,6 +13,7 @@ const UserQuiz = () => {
     const navigate = useNavigate();
     const [question, setQuestion] = useState([]);
     const [answer, setAnswer] = useState({});
+    const answerRes = useRef(answer)
     const [allowedDuration, setAllowedDuration] = useState(null)
     const [timeLeft, setTimeLeft] = useState(null);
     const [startTime, setStartTime] = useState(() => {
@@ -43,16 +44,17 @@ const UserQuiz = () => {
         });
     };
     const handleSubmit = async () => {
-        const hasAnswer = Object.keys(answer).length > 0;
-        if (!hasAnswer) {
+        const answerQuestion = question.map((q) => ({
+            questionId: q._id,
+            selectedAnswer: answerRes.current[q._id] || null,
+        }));
+
+        const hasAnyAnswer = answerQuestion.some(a => a.selectedAnswer !== null);
+        if (!hasAnyAnswer) {
             localStorage.removeItem(`quizStartTime-${topicId}`);
             navigate("/user/topic");
             return;
         }
-        const answerQuestion = question.map((q) => ({
-            questionId: q._id,
-            selectedAnswer: answer[q._id] || null,
-        }));
 
         try {
             await submitResultApi({
@@ -68,6 +70,7 @@ const UserQuiz = () => {
         }
     };
     useEffect(() => {
+        answerRes.current = answer;
         if (!startTime || !allowedDuration) return;
 
         const endTime = startTime + allowedDuration * 60 * 1000;
@@ -86,7 +89,7 @@ const UserQuiz = () => {
         updateTimer();
         timerRef.current = setInterval(updateTimer, 1000);
         return () => clearInterval(timerRef.current);
-    }, [startTime, allowedDuration]);
+    }, [startTime, allowedDuration, answer]);
     useEffect(() => {fetchQuestion();}, [topicId]);
     return (
         <div className="p-6">
@@ -95,6 +98,7 @@ const UserQuiz = () => {
                 <p className="text-red-600 text-lg font-semibold">⏱️ Thời gian còn lại: {formatTime(timeLeft)}</p>
                 <Text type="secondary">Số lượng câu: {question.length}</Text>
             </div>
+            <p>Bắt đầu chọn đáp án thời gian làm bãi sẽ được tính</p>
             <List
                 itemLayout="vertical"
                 dataSource={question}
