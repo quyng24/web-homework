@@ -1,8 +1,8 @@
 import { useParams } from "react-router-dom";
-import LayoutDefault from "../../layouts/LayoutDefault";
+import * as XLSX from 'xlsx';
 import { useEffect, useState } from "react";
 import { createQuestion, deleteQuestion, getQuestionsByTopicId, updateQuestion } from "../../api/apiQuestion";
-import { Button, Form, Input, Select, Table, message } from "antd";
+import { Button, Form, Input, Select, Table, message, Upload } from "antd";
 import BaseModal from "../../components/common/BaseModal";
 
 export default function AdminQuestion() {
@@ -64,6 +64,36 @@ export default function AdminQuestion() {
       messageApi.open({type: 'error', content: err.message});
     }
   };
+  const handleImport = async (file) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheet = workbook.Sheets[workbook.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(sheet);
+
+      const formatted = rows.map((row) => ({
+        questionText: row.questionText,
+        options: row.options.split(";").map(opt => opt.trim()),
+        answer: row.answer,
+        topicId: topicId,
+      }));
+
+      try {
+        for (const q of formatted) {
+          await createQuestion(q);
+        }
+        messageApi.success("Import thành công!");
+        fetchQuestions();
+      } catch (err) {
+        console.error(err);
+        messageApi.error("Import thất bại!");
+      }
+    };
+    reader.readAsArrayBuffer(file);
+    return false;
+  };
+
   useEffect(() => {
     fetchQuestions();
   }, [topicId]);
@@ -114,6 +144,9 @@ export default function AdminQuestion() {
       {contextHolder}
         <div className="w-full flex justify-end mb-4">
           <Button type="primary" onClick={() => setOpen(true)}>Thêm câu hỏi</Button>
+          <Upload beforeUpload={handleImport} accept=".xlsx,.csv" showUploadList={false}>
+            <Button>Import Excel</Button>
+          </Upload>
           <BaseModal 
             open={open} 
             onOk={editQuestion ? handleUpdateQuestion : handleAddQuestion} 

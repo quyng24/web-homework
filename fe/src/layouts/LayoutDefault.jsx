@@ -20,7 +20,7 @@ export default function LayoutDefault({children}) {
             <Col span={24}>
               <div className="w-full flex justify-between items-center h-[80px] px-10 bg-gradient-to-r from-cyan-500 to-blue-500 shadow-md fixed top-0 left-0 right-0 z-50">
                 <div className="flex justify-center items-center h-full">
-                  <img className="max-w-[80px] max-h-[80px] mix-blend-multiply" src="https://static.vecteezy.com/system/resources/previews/027/426/352/non_2x/sfe-logo-design-inspiration-for-a-unique-identity-modern-elegance-and-creative-design-watermark-your-success-with-the-striking-this-logo-vector.jpg" alt="Logo" />
+                  <img className="max-w-[80px] max-h-[80px] mix-blend-multiply" src="https://static.vecteezy.com/system/resources/previews/034/600/623/non_2x/sit-letter-logo-design-inspiration-for-a-unique-identity-modern-elegance-and-creative-design-watermark-your-success-with-the-striking-this-logo-vector.jpg" alt="Logo" />
                 </div>
                 <p onClick={() => navigate('/admin')} className="text-center text-lg font-semibold hover:underline cursor-pointer">Quản lý Người dùng</p>
                 <p onClick={() => navigate('/admin/topic')} className="text-center text-lg font-semibold hover:underline cursor-pointer">Quản lý Chủ đề</p>
@@ -32,7 +32,7 @@ export default function LayoutDefault({children}) {
           <Row className="w-full flex justify-between items-center h-[80px] px-10 bg-gradient-to-r from-cyan-500 to-blue-500 shadow-md fixed top-0 left-0 right-0 z-50 text-white">
             <Col span={4}>
               <div className="flex justify-center items-center w-full h-full">
-                <img className="max-w-[80px] max-h-[80px] mix-blend-multiply" src="https://static.vecteezy.com/system/resources/previews/027/426/352/non_2x/sfe-logo-design-inspiration-for-a-unique-identity-modern-elegance-and-creative-design-watermark-your-success-with-the-striking-this-logo-vector.jpg" alt="Logo" />
+                <img className="max-w-[80px] max-h-[80px] mix-blend-multiply" src="https://static.vecteezy.com/system/resources/previews/034/600/623/non_2x/sit-letter-logo-design-inspiration-for-a-unique-identity-modern-elegance-and-creative-design-watermark-your-success-with-the-striking-this-logo-vector.jpg" alt="Logo" />
               </div>
             </Col>
             <Col span={5}>
@@ -67,7 +67,7 @@ export default function LayoutDefault({children}) {
         <Row>
           <Col span={24}>
             <footer className="w-full text-center text-sm text-gray-500 py-6 border-t mt-10">
-              © 2025 SFE. Tất cả quyền được bảo lưu.
+              © 2025 SIT. Tất cả quyền được bảo lưu.
             </footer>
           </Col>
         </Row>
