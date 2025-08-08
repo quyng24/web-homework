@@ -98,7 +98,7 @@ export default function AdminTopic() {
           {
             key: 'delete',
             label: 'Xoá',
-            disable: true,
+            disabled: true,
             danger: true,
             onClick: () => {
               setDeleteData(record);
@@ -131,7 +131,7 @@ export default function AdminTopic() {
               <Button type="primary" onClick={editMode ? handleUpdateTopic : handleAddTopic}>{editMode ? "Lưu" : "Thêm"}</Button>
             </div>)} 
           title={editMode ? "Chỉnh sửa Chủ Đề" : "Thêm Chủ Đề"}>
-            <Form form={form} layout="vertical">
+            <Form form={form} layout="vertical" >
               <Form.Item name="topicName" label="Tên chủ đề">
                 <Input />
               </Form.Item>

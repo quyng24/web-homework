@@ -7,6 +7,7 @@ import routerAuth from './routers/auth.router.js';
 import routerTopic from './routers/topic.router.js';
 import routerQuestion from './routers/question.router.js';
 import routerResult from './routers/result.router.js';
+import routerAdmin from './routers/admin.router.js';
 
 app.use(express.json());
 app.use(cookieParser());
@@ -16,5 +17,6 @@ app.use('/api/auth', routerAuth);
 app.use('/api/topics', routerTopic);
 app.use('/api/questions', routerQuestion);
 app.use('/api/results', routerResult);
+app.use('/api/admin', routerAdmin);
 
 export default app;

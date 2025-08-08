@@ -51,11 +51,8 @@ export default function AdminQuestion() {
   const handleUpdateQuestion = async () => {
     try {
       const values = await form.validateFields();
-      const res = await updateQuestion(currentQuestion._id, {...values, topicId});
-      setDataQuestions(prev => {
-        const newList = [{ ...res.data, createdAt: new Date() }, ...prev];
-        return newList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      });
+      await updateQuestion(currentQuestion._id, {...values, topicId});
+      await fetchQuestions();
       messageApi.open({type: 'success', content: 'Cập nhật câu hỏi thành công!'})
       form.resetFields();
       setOpen(false);
@@ -95,6 +92,18 @@ export default function AdminQuestion() {
   };
 
   useEffect(() => {
+    if (open && editQuestion && currentQuestion) {
+      form.setFieldsValue({
+        questionText: currentQuestion.questionText,
+        options: currentQuestion.options,
+        answer: currentQuestion.answer,
+      });
+    } else if (open && !editQuestion) {
+      form.resetFields();
+    }
+  }, [open, editQuestion, currentQuestion, form]);
+
+  useEffect(() => {
     fetchQuestions();
   }, [topicId]);
   const columns = [
@@ -122,14 +131,9 @@ export default function AdminQuestion() {
           <Button
             type="primary"
             onClick={() => {
+              setOpen(true);
               setEditQuestion(true);
               setCurrentQuestion(record);
-              setOpen(true);
-              form.setFieldsValue({
-                questionText: record.questionText,
-                options: record.options,
-                answer: record.answer,
-              });
             }}
           >
             Sửa
@@ -158,7 +162,7 @@ export default function AdminQuestion() {
               </div>)} 
             title={editQuestion ? "Chỉnh sửa câu hỏi" : "Thêm Câu hỏi"}
           >
-            <Form form={form} layout="vertical">
+            <Form form={form}  layout="vertical" onFinish={handleUpdateQuestion}>
               <Form.Item name="questionText" label="Nội dung câu hỏi" rules={[{ required: true, message: "Vui lòng nhập câu hỏi" }]}>
                 <Input />
               </Form.Item>
@@ -204,7 +208,7 @@ export default function AdminQuestion() {
           </BaseModal>
         </div>
         <div className="w-full flex justify-center items-center">
-            <Table columns={columns} dataSource={dataQuestions} pagination={{ pageSize: 5 }} rowKey={(record, index) => record._id || index} />
+            <Table columns={columns} dataSource={dataQuestions} pagination={{ pageSize: 5 }} rowKey={(record) => record._id} />
         </div>
         <BaseModal 
         open={openDelete} 
