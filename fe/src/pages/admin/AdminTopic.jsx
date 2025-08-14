@@ -1,78 +1,80 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import LayoutDefault from "../../layouts/LayoutDefault";
 import BaseModal from "../../components/common/BaseModal";
 import { createTopic, deleteTopic, getTopics, updateTopic } from "../../api/apiTopic";
 import { Button, Form, Input, Dropdown, message, Table, Select } from "antd";
 import { MoreOutlined } from "@ant-design/icons";
 import { hasEmptyStringOrNoData } from "../../utils/object";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function AdminTopic() {
-  const [topics, setTopics] = useState([]);
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [currentTopic, setCurrentTopic] = useState(null);
   const [deleteData, setDeleteData] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
+  const {data: topics} = useQuery({
+    queryKey: ['topics'],
+    queryFn: getTopics,
+    select: res => res.data
+  });
 
-  const handleDelete = async (id) => {
-    try {
-      const res = await deleteTopic(id);
-      setTopics(prev => prev.filter(t => t._id !== id));
-      messageApi.open({type: 'success', content: res.data.message});
+  const addTopicMutation = useMutation({
+    mutationFn: createTopic,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['topics']});
+      messageApi.open({type: 'success', content: 'Tạo chủ đề mới thành công!'});
+      form.resetFields();
+      setOpen(false);
+    },
+    onError: err =>  messageApi.open({type: 'error', content: err.message})
+  });
+  const deleteTopicnMutation = useMutation({
+    mutationFn: deleteTopic,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['topics']});
+      messageApi.open({type: 'success', content: 'Xóa câu hỏi thành công!'});
       setOpenDelete(false);
-    } catch (err) {
-      messageApi.open({type: 'error', content: err.message});
-    }
-  };
+    },
+    onError: err => messageApi.open({type: 'error', content: err.message})
+  });
+  const updateTopicMutation = useMutation({
+    mutationFn: ({id, data}) => updateTopic(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['topics']});
+      form.resetFields();
+      setOpen(false);
+      messageApi.open({type: 'success', content: 'Cập nhật chủ đề thành công'});
+    },
+    onError: err =>  messageApi.open({type: 'error', content: err.message})
+  })
 
-  const handleAddTopic = async () => {
+  const handleAddOrUpdateTopic = async () => {
     try {
       const values = await form.validateFields();
-      if(!hasEmptyStringOrNoData(values)){
-        const res = await createTopic(values);
-        setTopics(prev => [...prev, res.data]);
-        messageApi.open({type: 'success', content: 'Tạo chủ đề mới thành công!'});
-        form.resetFields();
-        setOpen(false);
+      if(editMode && currentTopic) {
+        updateTopicMutation.mutate({id: currentTopic._id, data: values});
       } else {
-        messageApi.open({type: 'error', content: 'Hãy thêm đầy đủ thông tin!'});
+        if (!hasEmptyStringOrNoData(values)) {
+          addTopicMutation.mutate(values);
+        } else {
+          messageApi.open({ type: 'error', content: 'Hãy thêm đầy đủ thông tin!' });
+        }
       }
     } catch (err) {
-      messageApi.open({type: 'error', content: err.message});
-    }
-  };
-
-  const handleUpdateTopic = async () => {
-    try {
-      const values = await form.validateFields();
-      const res = await updateTopic(currentTopic._id, values);
-      setTopics(prev => prev.map(t => (t._id === currentTopic._id ? res.data : t)));
-      form.resetFields();
-      messageApi.open({type: 'success', content: 'Cập nhật chủ đề thành công'});
-      setOpen(false);
-    } catch (err) {
-      messageApi.open({type: 'error', content: err.message});
+      messageApi.open({ type: 'error', content: err.message || 'Có lỗi xảy ra!' });
     }
   }
-
-  useEffect(() => {
-    const fetchTopics = async () => {
-      try {
-        const res = await getTopics();
-        setTopics(res.data);
-      } catch (err) {
-        message.error(err.message);
-      }
-    };
-    fetchTopics();
-  }, []);
+  const handleDelete = async () => deleteTopicnMutation.mutate(deleteData._id);
   const columns = [
     {title: 'Tên chủ đề', dataIndex: 'topicName'},
     {title: 'Mô tả', dataIndex: 'descriptionTopic'},
+    {title: "Số câu hỏi", dataIndex: "questionCount", key: "questionCount"},
+    {title: 'Thời gian làm bài', dataIndex: 'duration', },
     {
       title: "Hành động",
       render: (_, record) => {
@@ -98,7 +100,6 @@ export default function AdminTopic() {
           {
             key: 'delete',
             label: 'Xoá',
-            disabled: true,
             danger: true,
             onClick: () => {
               setDeleteData(record);
@@ -123,12 +124,12 @@ export default function AdminTopic() {
         <Button type="primary" onClick={() => setOpen(true)}>Thêm chủ đề</Button>
         <BaseModal 
           open={open} 
-          onOk={editMode ? handleUpdateTopic : handleAddTopic} 
+          onOk={handleAddOrUpdateTopic} 
           onCancel={() => {setOpen(false); setEditMode(false); form.resetFields()}} 
           footer={(
             <div className="flex gap-2 justify-end">
               <Button type="link" onClick={() => {setOpen(false); setEditMode(false); form.resetFields()}}>Đóng</Button> 
-              <Button type="primary" onClick={editMode ? handleUpdateTopic : handleAddTopic}>{editMode ? "Lưu" : "Thêm"}</Button>
+              <Button type="primary" onClick={handleAddOrUpdateTopic}>{editMode ? "Lưu" : "Thêm"}</Button>
             </div>)} 
           title={editMode ? "Chỉnh sửa Chủ Đề" : "Thêm Chủ Đề"}>
             <Form form={form} layout="vertical" >

@@ -3,7 +3,6 @@ import { Typography, List, Radio, Button } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from 'react-router-dom';
 import { submitResultApi } from '../../api/apiResult';
-import LayoutDefault from '../../layouts/LayoutDefault';
 import { formatTime } from '../../utils/date';
 import { getTopicById } from '../../api/apiTopic';
 const { Title, Text } = Typography;
