@@ -1,29 +1,19 @@
 import { useParams } from "react-router-dom";
 import { Typography, List, Radio, Button, Tag } from "antd";
-import { useEffect, useState } from "react";
 import { getLatestResultByUserAndTopic } from "../../api/apiResult";
 const { Title, Text } = Typography;
-import LayoutDefault from '../../layouts/LayoutDefault';
 import { authProvider } from "../../context/auth";
+import { useQuery } from "@tanstack/react-query";
 
 const UserResult = () => {
   const { topicId } = useParams();
   const user = authProvider.user;
-  const [result, setResult] = useState(null);
-
-  useEffect(() => {
-    const fetchResult = async () => {
-      try {
-        const res = await getLatestResultByUserAndTopic(user._id, topicId);
-        console.log(res.data)
-        setResult(res.data);
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    fetchResult();
-  }, [topicId, user._id]);
-
+  const {data: result} = useQuery({
+    queryKey: ['userResult', user?._id, topicId],
+    queryFn: () => getLatestResultByUserAndTopic(user._id, topicId).then(res => res.data),
+    enabled: !!topicId,
+  });
+  console.log(result)
   return (
     <>
       {!result ? <Text type="danger">Không tìm thấy kết quả.</Text> : 

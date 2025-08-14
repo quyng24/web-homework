@@ -1,26 +1,18 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import LayoutDefault from "../../layouts/LayoutDefault";
 import { getUserResultById } from "../../api/apiResult"; 
 import { Typography, List, Radio, Tag, Button } from "antd";
+import { useQuery } from "@tanstack/react-query";
 const { Title, Text } = Typography;
 
 const UserResultById = () => {
   const { resultId } = useParams();
   const navigate = useNavigate();
-  const [result, setResult] = useState(null);
 
-  useEffect(() => {
-    const fetchResult = async () => {
-      try {
-        const res = await getUserResultById(resultId);
-        setResult(res.data);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchResult();
-  }, [resultId]);
+  const {data: result} = useQuery({
+    queryKey: ['userResult', resultId],
+    queryFn: () => getUserResultById(resultId).then(res => res.data),
+    enabled: !!resultId,
+  });
   return (
     <div>
       {!result ? <Text type="danger">Không tìm thấy kết quả.</Text> : 

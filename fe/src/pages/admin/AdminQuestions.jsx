@@ -4,63 +4,73 @@ import { useEffect, useState } from "react";
 import { createQuestion, deleteQuestion, getQuestionsByTopicId, updateQuestion } from "../../api/apiQuestion";
 import { Button, Form, Input, Select, Table, message, Upload } from "antd";
 import BaseModal from "../../components/common/BaseModal";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function AdminQuestion() {
   const {topicId} = useParams();
-  const [dataQuestions, setDataQuestions] = useState([]);
+  const queryClient = useQueryClient();
+  const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteData, setDeleteData] = useState(null);
   const [editQuestion, setEditQuestion] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
-  const [form] = Form.useForm();
 
-  const fetchQuestions = async () => {
-    try {
-      const res = await getQuestionsByTopicId(topicId);
-      const sorted = res.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-      setDataQuestions(sorted);
-    } catch (err) {
-      messageApi.open({type: 'error', content: err.message});
-    }
-  };
-  const handleAddQuestion = async () => {
-    try {
-      const values = await form.validateFields();
-      await createQuestion({...values, topicId});
-      await fetchQuestions();
+  const {data: dataQuestions} = useQuery({
+    queryKey: ['questions', topicId],
+    queryFn: () => getQuestionsByTopicId(topicId),
+    select: res => res.data
+  });
+  const addQuestionMutation = useMutation({
+    mutationFn: (data) => createQuestion(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['questions', topicId]});
       messageApi.open({type: 'success', content: 'Thêm câu hỏi thành công!'});
-      form.resetFields();
       setOpen(false);
-    } catch (err) {
-      messageApi.open({type: 'error', content: 'Bạn chưa làm đủ các bước', err});
-    }
-  };
-  const handleDeleteQuestion = async (id) => {
-    try {
-      await deleteQuestion(id);
-      setDataQuestions(prev => prev.filter(q => q._id !== id));
+      form.resetFields();
+    },
+    onError: (err) => messageApi.open({type: 'error', content: 'Bạn chưa làm đủ các bước', err})
+  });
+  const deteleQuestionMutation = useMutation({
+    mutationFn: deleteQuestion,
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['questions', topicId]});
       messageApi.open({type: 'success', content: 'Xoá câu hỏi thành công!'});
-      setOpenDelete(false);
-    } catch (err) {
-      messageApi.open({type: 'error', content: err.message});
-    }
-
-  };
-  const handleUpdateQuestion = async () => {
-    try {
-      const values = await form.validateFields();
-      await updateQuestion(currentQuestion._id, {...values, topicId});
-      await fetchQuestions();
-      messageApi.open({type: 'success', content: 'Cập nhật câu hỏi thành công!'})
+    },
+    onError: (err) => messageApi.open({type: 'error', content: err.message})
+  });
+  const updateQuestionMutation = useMutation({
+    mutationFn: ({id, data}) => updateQuestion(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['questions', topicId]});
+      messageApi.open({type: 'success', content: 'Cập nhật câu hỏi thành công!'});
       form.resetFields();
       setOpen(false);
       setEditQuestion(false);
-    } catch (err) {
-      messageApi.open({type: 'error', content: err.message});
+    }
+  })
+
+  const handleAddOrUpdate = async () => {
+    try {
+      const values = await form.validateFields();
+      if (editQuestion && currentQuestion) {
+        updateQuestionMutation.mutate({ id: currentQuestion._id, data: { ...values, topicId } });
+      } else {
+        addQuestionMutation.mutate({ ...values, topicId });
+      }
+    } catch {
+      messageApi.error("Vui lòng kiểm tra lại form!");
     }
   };
+  
+  const handleDeleteQuestion = async () => {
+    if(deleteData){
+      deteleQuestionMutation.mutate(deleteData._id);
+      setOpenDelete(false);
+    }
+  };
+
   const handleImport = async (file) => {
     const reader = new FileReader();
     reader.onload = async (e) => {
@@ -80,8 +90,8 @@ export default function AdminQuestion() {
         for (const q of formatted) {
           await createQuestion(q);
         }
+        queryClient.invalidateQueries({queryKey: ['questions', topicId]});
         messageApi.success("Import thành công!");
-        fetchQuestions();
       } catch (err) {
         console.error(err);
         messageApi.error("Import thất bại!");
@@ -102,10 +112,6 @@ export default function AdminQuestion() {
       form.resetFields();
     }
   }, [open, editQuestion, currentQuestion, form]);
-
-  useEffect(() => {
-    fetchQuestions();
-  }, [topicId]);
   const columns = [
     {
       title: 'Câu hỏi',
@@ -153,16 +159,16 @@ export default function AdminQuestion() {
           </Upload>
           <BaseModal 
             open={open} 
-            onOk={editQuestion ? handleUpdateQuestion : handleAddQuestion} 
+            onOk={handleAddOrUpdate} 
             onCancel={() => {setOpen(false); setEditQuestion(false); form.resetFields()}} 
             footer={(
               <div className="flex gap-2 justify-end">
                 <Button type="link" onClick={() => {setOpen(false); setEditQuestion(false); form.resetFields()}}>Đóng</Button> 
-                <Button type="primary" onClick={editQuestion ? handleUpdateQuestion : handleAddQuestion}>{editQuestion ? "Lưu" : "Thêm"}</Button>
+                <Button type="primary" onClick={handleAddOrUpdate}>{editQuestion ? "Lưu" : "Thêm"}</Button>
               </div>)} 
             title={editQuestion ? "Chỉnh sửa câu hỏi" : "Thêm Câu hỏi"}
           >
-            <Form form={form}  layout="vertical" onFinish={handleUpdateQuestion}>
+            <Form form={form}  layout="vertical" onFinish={handleAddOrUpdate}>
               <Form.Item name="questionText" label="Nội dung câu hỏi" rules={[{ required: true, message: "Vui lòng nhập câu hỏi" }]}>
                 <Input />
               </Form.Item>
@@ -211,19 +217,19 @@ export default function AdminQuestion() {
             <Table columns={columns} dataSource={dataQuestions} pagination={{ pageSize: 5 }} rowKey={(record) => record._id} />
         </div>
         <BaseModal 
-        open={openDelete} 
-        onOk={handleDeleteQuestion} 
-        onCancel={() => {setOpenDelete(false)}} 
-        footer={(
-          <div className="flex gap-2 justify-end">
-            <Button type="link" onClick={() => setOpenDelete(false)}>Đóng</Button> 
-            <Button type="primary" onClick={() => handleDeleteQuestion(deleteData ? deleteData._id : null)}>Xoá</Button>
-          </div>)} 
-        title='Xoá câu hỏi'>
-          <div className="flex flex-col justify-center items-center">
-            <h2>{`Bạn có chắc chắn muốn xoá câu hỏi: ${deleteData ? deleteData.questionText : 'này'}!`}</h2>
-            <p>Nếu xác nhận xoá chủ đề này bạn sẽ không thể khôi phục lại trạng thái ban đầu</p>
-          </div>
+          open={openDelete} 
+          onOk={handleDeleteQuestion} 
+          onCancel={() => {setOpenDelete(false)}} 
+          footer={(
+            <div className="flex gap-2 justify-end">
+              <Button type="link" onClick={() => setOpenDelete(false)}>Đóng</Button> 
+              <Button type="primary" onClick={() => handleDeleteQuestion(deleteData ? deleteData._id : null)}>Xoá</Button>
+            </div>)} 
+          title='Xoá câu hỏi'>
+            <div className="flex flex-col justify-center items-center">
+              <h2>{`Bạn có chắc chắn muốn xoá câu hỏi: ${deleteData ? deleteData.questionText : 'này'}!`}</h2>
+              <p>Nếu xác nhận xoá chủ đề này bạn sẽ không thể khôi phục lại trạng thái ban đầu</p>
+            </div>
         </BaseModal>
     </>
   )

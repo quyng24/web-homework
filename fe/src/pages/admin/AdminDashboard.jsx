@@ -4,12 +4,29 @@ import { deleteUser, getUsers } from '../../api/apiUser';
 import { authProvider } from '../../context/auth';
 import { getApiChartAdmin } from '../../api/apiAdmin';
 import BaseChart from '../../components/BaseChart';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 
 export default function AdminDashboard () {
-  const [dataUser, setDataUser] = useState([]);
   const [nameUser, setNameUser] = useState('');
-  const [dataStatistics, setDataStatistics] = useState([]);
+  const queryClient = useQueryClient();
+
+  const {data: users} = useQuery({
+    queryKey: ['users'],
+    queryFn: getUsers,
+    select: res => res.data
+  });
+  const {data: dataStatistics, isLoading: isLoadingStats} = useQuery({
+    queryKey: ['chart-admin'],
+    queryFn: getApiChartAdmin,
+    select: res => res.data
+  });
+  const deleteUserMutation = useMutation({
+    mutationFn: deleteUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+  });
   const columnsUser = [
     {
       title: "Name",
@@ -36,26 +53,13 @@ export default function AdminDashboard () {
   ];
   const handleDeleteUser = async (id) => {
     try {
-      await deleteUser(id);
-      const res = await getUsers();
-      setDataUser(res.data);
+     deleteUserMutation.mutate(id);
     } catch (err) {
       console.error(err);
     }
   }
   useEffect(()=> {
-    const fetchData = async () => {
-      try {
-        const dataStatisticsRes = await getApiChartAdmin();
-        const userRes = await getUsers();
-        setDataStatistics(dataStatisticsRes.data);
-        setDataUser(userRes.data);
-    } catch (err) {
-        console.error(err);
-      }            
-    }
     setNameUser(authProvider.user.name);
-    fetchData();
   }, [])
   return (
     <div className="flex flex-col min-h-screen">
@@ -63,10 +67,10 @@ export default function AdminDashboard () {
       <div className='py-3'>
         <h3>Thống kê các chủ đề</h3>
         <div className='w-[40%] h-[40%] mx-auto'>
-          {dataStatistics.length > 0 ? (<BaseChart width={300} height={300} data={dataStatistics}/>) : <p>Đang tải dữ liệu...</p>}
+          {isLoadingStats ? (<p>Đang tải dữ liệu...</p>) : (<BaseChart width={300} height={300} data={dataStatistics} />)}
         </div>
       </div>
-      <Table rowKey="_id" columns={columnsUser} dataSource={dataUser} className="shadow-2xl"/>
+      <Table rowKey="_id" columns={columnsUser} dataSource={users} className="shadow-2xl"/>
     </div>
   );
 }

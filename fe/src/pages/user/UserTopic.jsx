@@ -1,37 +1,18 @@
-import { useEffect, useState } from "react";
 import { Table, Button } from "antd";
 import { getTopics } from "../../api/apiTopic";
-import LayoutDefault from "../../layouts/LayoutDefault";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 const UserTopic = () => {
-  const [topic, setTopic] = useState([]);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchDataTopics = async () => {
-      const res = await getTopics();
-      setTopic(res.data);
-    }
-    fetchDataTopics();
-  }, []);
-
+  const {data: topics} = useQuery({
+    queryKey: ['topics'],
+    queryFn: getTopics,
+    select: res => res.data,
+  })
   const columns = [
-    {
-      title: "Tên chủ đề",
-      dataIndex: "topicName",
-      key: "topicName",
-      render: (index) => index
-    },
-    {
-      title: "Số câu hỏi",
-      dataIndex: "questionCount",
-      key: "questionCount",
-    },
-    {
-      title: 'Thời gian làm bài',
-      dataIndex: 'duration',
-      key: 'duration'
-    },
+    {title: "Tên chủ đề", dataIndex: "topicName", key: "topicName", render: (index) => index},
+    {title: "Số câu hỏi", dataIndex: "questionCount", key: "questionCount"},
+    {title: 'Thời gian làm bài', dataIndex: 'duration', key: 'duration'},
     {
       title: "Làm bài",
       key: "action",
@@ -46,7 +27,7 @@ const UserTopic = () => {
       <h2>Danh sách chủ đề</h2>
       <Table
         columns={columns}
-        dataSource={topic}
+        dataSource={topics}
         rowKey="_id"
         pagination={{ pageSize: 5 }}
       />

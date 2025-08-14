@@ -1,12 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Col, Row, Carousel, Button } from "antd";
-import LayoutDefault from "../../layouts/LayoutDefault";
 import { getTopics } from "../../api/apiTopic";
 import { authProvider } from "../../context/auth";
+import { useQuery } from "@tanstack/react-query";
 
 export default function UserDashboard() {
-  const [topics, setTopics] = useState([]);
+  const {data: topics} = useQuery({
+    queryKey: ['topics'],
+    queryFn: getTopics,
+    select: res => res.data
+  })
   const [nameUser, setNameUser] = useState(null);
   const navigate = useNavigate();
   const contentStudy = [
@@ -35,14 +39,7 @@ export default function UserDashboard() {
     await authProvider.init();
     setNameUser(authProvider.user.name)
   }
-  useEffect(() => {
-    safeGetNameUser();
-    const fetchDataTopics = async () => {
-      const res = await getTopics();
-      setTopics(res.data);
-    }
-    fetchDataTopics();
-  }, []);
+  useEffect(() => {safeGetNameUser()}, []);
   return (
     <div className="flex flex-col">
       <h2 className="text-4xl mt-10 mb-15 font-bold text-blue-700">👋 Xin chào, {nameUser}!</h2>
@@ -101,7 +98,7 @@ export default function UserDashboard() {
       <Row>
         <Col span={24}>
           <Carousel arrows autoplay infinite slidesToShow={2} slidesToScroll={1}>
-            {topics.map((topic, index) => (
+            {topics?.map((topic, index) => (
               <div key={index} className="p-6">
                 <div className="overflow-hidden rounded-xl shadow-md hover:shadow-xl transition duration-300">
                   <img
